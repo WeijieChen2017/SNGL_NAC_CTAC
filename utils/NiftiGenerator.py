@@ -445,6 +445,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                     tmpY = self.normOptions.normYfunction( Yimg.get_fdata() )
                     # sample data
                     YimgSlices = tmpY[:,:,z-Yslice_samples//2:z+Yslice_samples//2+1]
+                    print("YimgSlices stage 1: ", np.amin(YimgSlices))
                 else:
                     # type is none, auto, or fixed
                     # prepare normalization                    
@@ -461,6 +462,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 # resize to fixed size for model (note img is resized with CUBIC)
                 XimgSlices = cv2.resize( XimgSlices, dsize=(img_size[1],img_size[0]), interpolation = self.normOptions.normXinterp)
                 YimgSlices = cv2.resize( YimgSlices, dsize=(img_size[1],img_size[0]), interpolation = self.normOptions.normYinterp)
+                print("YimgSlices stage 2: ", np.amin(YimgSlices))
 
                 # ensure 3D matrix if batch size is equal to 1
                 if XimgSlices.ndim == 2:
@@ -473,6 +475,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 M = self.get_augment_transform()
                 XimgSlices = self.do_augment( XimgSlices, M )
                 YimgSlices = self.do_augment( YimgSlices, M )
+                print("YimgSlices stage 3: ", np.amin(YimgSlices))
 
                 # if an additional augmentation function is supplied, apply it here
                 if self.augOptions.additionalFunction:
