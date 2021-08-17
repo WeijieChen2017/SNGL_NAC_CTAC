@@ -71,7 +71,7 @@ def train():
     model.compile(optimizer=Adam(lr=1e-4),
                   loss=loss,
                   metrics=[mean_squared_error,mean_absolute_error])
-   model.summary()
+    model.summary()
 
     # Save the model architecture
     with open(train_para["save_folder"]+train_para["model_name"], 'w') as f:
