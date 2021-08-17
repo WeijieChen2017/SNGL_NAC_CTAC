@@ -441,7 +441,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                     # get normalized data (and read whole volume)
                     tmpY = self.normOptions.normYfunction( Yimg.get_fdata() )
                     # sample data
-                    YimgSlices = tmpY[:,:,zY-Yslice_samples//2:zY+Yslice_samples//2+1]
+                    YimgSlices = tmpY[:,:,z-Yslice_samples//2:z+Yslice_samples//2+1]
                 else:
                     # type is none, auto, or fixed
                     # prepare normalization                    
