@@ -27,7 +27,7 @@ train_para ={
     "depth" : 4, 
     "validation_split" : 0.2,
     "loss" : "l1",
-    "x_data_folder" : 'NAC_SRC',
+    "x_data_folder" : 'NPR_SRC', # NAC PET Resampled
     "y_data_folder" : 'CT_SRC',
     "weightfile_name" : 'weights_'+para_name+'.h5',
     "model_name" : 'model_'+para_name+'.json',
