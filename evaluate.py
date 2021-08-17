@@ -101,6 +101,8 @@ def eval():
                                                                 test_para["img_cols"],
                                                                 test_para["channel_X"])
                     print("inputX_slice shape: ", inputX_slice.shape)
+                    print("inputX_slice mean:", np.mean(inputX_slice))
+                    print("inputX_slice std:", np.std(inputX_slice))
                     outputY_slice =  model.predict(inputX_slice, verbose=1)
                     print("outputY_slice shape: ", outputY_slice.shape)
                     outputY[:, :, idx] = np.squeeze(np.transpose(outputY_slice, (1,2,0,3))[:, :, :, test_para["channel_Y"] // 2]) * testX_max
