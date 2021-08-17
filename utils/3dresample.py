@@ -5,11 +5,11 @@ os.system("set AFNI_NIFTI_TYPE_WARN = NO")
 case_list = glob.glob("./CT_*.nii.gz")
 case_list.sort()
 for case_path in case_list:
-    case_name = os.path.basename(case_path)[3:6]
+    name = os.path.basename(case_path)[3:6]
     # idx_str = "{0:0>3}".format(idx+1)
-    print(case_name)
+    print(name)
     # cmd_1 = "3dresample -dxyz 1.172 1.172 1.065 -prefix "+tag+idx_str+" -inset "+tag+idx_str+"_PET.nii.gz -rmode Cu"
-    cmd_1 = "3dresample -prefix NPR_"+case_name+".nii.gz -master CT_"+name+".nii.gz -rmode Cu -input NP_"+name+".nii.gz -bound_type SLAB"
+    cmd_1 = "3dresample -prefix NPR_"+name+".nii.gz -master CT_"+name+".nii.gz -rmode Cu -input NP_"+name+".nii.gz -bound_type SLAB"
     # cmd_2 = "3dZeropad -I 17 -S 17 p"+idx_str+"+orig"
     # cmd_3 = "3dAFNItoNIFTI -prefix "+tag+idx_str+" "+tag+idx_str+"+orig"
     # cmd_4 = "rm -f zeropad+orig.BRIK"
