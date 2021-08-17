@@ -213,7 +213,7 @@ def split_dataset(folderX, folderY, validation_ratio):
 
     for valid_name in valid_list:
         valid_nameX = folderX+"/"+valid_name
-        valid_nameY = folderY+"/"+valid_name.replace("NP", "CT")
+        valid_nameY = folderY+"/"+valid_name.replace("NPR", "CT")
         cmdX = "mv "+valid_nameX+" "+valid_folderX
         cmdY = "mv "+valid_nameY+" "+valid_folderY
         print(cmdX)
@@ -223,7 +223,7 @@ def split_dataset(folderX, folderY, validation_ratio):
 
     for train_name in train_list:
         train_nameX = folderX+"/"+train_name
-        train_nameY = folderY+"/"+train_name.replace("NP", "CT")
+        train_nameY = folderY+"/"+train_name.replace("NPR", "CT")
         cmdX = "mv "+train_nameX+" "+train_folderX
         cmdY = "mv "+train_nameY+" "+train_folderY
         print(cmdX)
