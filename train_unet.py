@@ -152,7 +152,7 @@ def train():
     dataset_go_back(folder_list, sub_folder_list)
     os.system("mkdir "+train_para["para_name"])
     os.system("mv *"+train_para["para_name"]+"*.jpg "+train_para["para_name"])
-    os.system("mv "+train_para["para_name"]+" ./jpeg/")
+    os.system("mv "+train_para["para_name"]+" ./jpeg/"+train_para["para_name"])
 
 def dataset_go_back(folder_list, sub_folder_list):
 

@@ -41,11 +41,11 @@ def eval():
             "batch_size" : 4
         }
 
-        print("Model: ./achives/model_"+test_para["train_para_name"]+".json")
-        model_list = glob.glob("./achives/model_"+test_para["train_para_name"]+".json")
+        print("Model: ./save_models/model_"+test_para["train_para_name"]+".json")
+        model_list = glob.glob("./save_models/model_"+test_para["train_para_name"]+".json")
         model_list.sort()
         for model_path in model_list:
-            weights_path = "./achives/weights_"+test_para["train_para_name"]+".h5"
+            weights_path = "./save_models/weights_"+test_para["train_para_name"]+".h5"
             print('-'*50)
             print('Loading model...')
             print('-'*50)
