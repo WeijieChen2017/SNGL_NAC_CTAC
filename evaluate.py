@@ -31,7 +31,7 @@ def eval():
           train_para = json.load(f)
 
         test_para ={  
-            "test_para_name" : test_para_name,
+            "test_para_namae" : test_para_name,
             "train_para_name" : train_para_name,
             "channel_X" : train_para["channel_X"],
             "channel_Y" : train_para["channel_Y"], 
@@ -134,6 +134,10 @@ def eval():
                 diffY_name = diffY_folder+testX_name
                 nibabel.save(predY_file, predY_name)
                 nibabel.save(diffY_file, diffY_name)
+
+        save_folder = "./results/"+test_para["test_para_name"]
+        if not os.path.exists(save_folder):
+            os.makedirs(save_folder)
 
         with open("./results/"+test_para["test_para_name"]+"/test_para_"+test_para["test_para_name"]+".json", "w") as outfile:  
             json.dump(test_para, outfile)
