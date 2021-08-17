@@ -34,8 +34,8 @@ train_para ={
     "save_folder" : './save_models/',
     "jpgprogressfile_name" : 'progress_'+para_name,
     "batch_size" : 2, # should be smallish. 1-10
-    "num_epochs" : 10, # should train for at least 100-200 in total
-    "steps_per_epoch" : 30, # should be enough to be equal to one whole pass through the dataset
+    "num_epochs" : 3, # should train for at least 100-200 in total
+    "steps_per_epoch" : 30*160, # should be enough to be equal to one whole pass through the dataset
     "initial_epoch" : 0, # for resuming training
     "load_weights" : False, # load trained weights for resuming training
 }  
@@ -255,18 +255,21 @@ def progresscallback_img2img(epoch, logs, model, history, fig, generatorV):
     plt.figure(dpi=200)
     for idx in range(n_batch):
         print("subplot ", idx*3+1)
+        print("Mean", np.mean(np.squeeze(dataX[idx, :, :, sliceX//2])))
         plt.subplot(n_batch, 3, idx*3+1)
         plt.imshow(np.rot90(np.squeeze(dataX[idx, :, :, sliceX//2])),cmap='gray')
         plt.axis('off')
         plt.title('input X[0]')
 
         print("subplot ", idx*3+2)
+        print("Mean", np.mean(np.squeeze(dataY[idx, :, :, sliceY//2])))
         plt.subplot(n_batch, 3, idx*3+2)
         plt.imshow(np.rot90(np.squeeze(dataY[idx, :, :, sliceY//2])),cmap='gray')
         plt.axis('off')
         plt.title('target Y[0]')
 
         print("subplot ", idx*3+3)
+        print("Mean", np.mean(np.squeeze(predY[idx, :, :, sliceY//2])))
         plt.subplot(n_batch, 3, idx*3+3)
         plt.imshow(np.rot90(np.squeeze(predY[idx, :, :, sliceY//2])),cmap='gray')
         plt.axis('off')
@@ -288,6 +291,7 @@ def progresscallback_img2img(epoch, logs, model, history, fig, generatorV):
     fig.savefig('progress_loss_{0}_{1:05d}.jpg'.format(train_para["jpgprogressfile_name"],epoch+1))
     fig.canvas.flush_events()
     print('progress_loss_{0}_{1:05d}.jpg saved'.format(train_para["jpgprogressfile_name"],epoch+1))
+    plt.close('all')
 
 if __name__ == '__main__':
     train()
