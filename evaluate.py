@@ -96,6 +96,7 @@ def eval():
                 print("inputX shape: ", inputX.shape)
                 outputY = np.zeros(testX_data.shape)
                 for idx in range(testX_data.shape[2]):
+                    print("-"*50)
                     inputX_slice = inputX[idx, :, :, :].reshape(1, 
                                                                 test_para["img_rows"],
                                                                 test_para["img_cols"],

@@ -479,4 +479,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 batch_X[i,:,:,:] = XimgSlices
                 batch_Y[i,:,:,:] = YimgSlices
 
+            print("-"*25)
+            print("batch_X: ", np.mean(batch_X), np.std(batch_X))
+            print("batch_X: ", np.mean(batch_Y), np.std(batch_Y))
             yield (batch_X , batch_Y)
