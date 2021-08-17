@@ -49,6 +49,12 @@ with open("./json/train_para_"+train_para["para_name"]+".json", "w") as outfile:
 
 #######################
 
+def CT_norm(data):
+    data[data<-1000] = -1000
+    data[data>3000] = 3000
+    data = (data + 1000) / 4000
+    return data
+
 def train():
 
     print(train_para)
@@ -96,9 +102,11 @@ def train():
     niftiGen_norm_opts.normXtype = 'fixed'
     niftiGen_norm_opts.normXoffset = 0
     niftiGen_norm_opts.normXscale = 6000
-    niftiGen_norm_opts.normYtype = 'fixed'
-    niftiGen_norm_opts.normYoffset = -1000
-    niftiGen_norm_opts.normYscale = 4000
+    # niftiGen_norm_opts.normYtype = 'fixed'
+    # niftiGen_norm_opts.normYoffset = -1000
+    # niftiGen_norm_opts.normYscale = 4000
+    niftiGen_norm_opts.normYtype = 'function'
+    niftiGen_norm_opts.normYfunction = CT_norm
     print(niftiGen_norm_opts)
 
     folderX = "./data_train/"+train_para["x_data_folder"]
