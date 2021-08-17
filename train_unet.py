@@ -35,7 +35,7 @@ train_para ={
     "jpgprogressfile_name" : 'progress_'+para_name,
     "batch_size" : 2, # should be smallish. 1-10
     "num_epochs" : 3, # should train for at least 100-200 in total
-    "steps_per_epoch" : 30*160, # should be enough to be equal to one whole pass through the dataset
+    "steps_per_epoch" : 30, # should be enough to be equal to one whole pass through the dataset
     "initial_epoch" : 0, # for resuming training
     "load_weights" : False, # load trained weights for resuming training
 }  
