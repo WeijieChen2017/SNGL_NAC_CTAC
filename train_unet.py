@@ -3,9 +3,9 @@ from __future__ import print_function
 import os
 import glob
 import json
+import numpy as np
 from time import time
 from matplotlib import pyplot as plt
-import numpy as np
 
 import tensorflow
 from tensorflow.keras.callbacks import History, ModelCheckpoint, TensorBoard, LambdaCallback
@@ -15,7 +15,7 @@ from tensorflow.keras.optimizers import Adam
 from models import Unet
 from utils import NiftiGenerator
 
-para_name = "ex04"
+para_name = "exper01"
 # Data to be written  
 train_para ={  
     "para_name" : para_name,
@@ -27,26 +27,29 @@ train_para ={
     "depth" : 4, 
     "validation_split" : 0.2,
     "loss" : "l1",
-    "x_data_folder" : 'NAC',
-    "y_data_folder" : 'CTAC',
+    "x_data_folder" : 'NAC_SRC',
+    "y_data_folder" : 'CTAC_SRC',
     "weightfile_name" : 'weights_'+para_name+'.h5',
     "model_name" : 'model_'+para_name+'.json',
-    "save_folder" : './achives/',
+    "save_folder" : './save_models/',
     "jpgprogressfile_name" : 'progress_'+para_name,
-    "batch_size" : 2, # should be smallish. 1-10
-    "num_epochs" : 5, # should train for at least 100-200 in total
-    "steps_per_epoch" : 20*89, # should be enough to be equal to one whole pass through the dataset
+    "batch_size" : 4, # should be smallish. 1-10
+    "num_epochs" : 10, # should train for at least 100-200 in total
+    "steps_per_epoch" : 30*300, # should be enough to be equal to one whole pass through the dataset
     "initial_epoch" : 0, # for resuming training
     "load_weights" : False, # load trained weights for resuming training
 }  
-     
+
+for folder_name in ["json", "save_models", "results"]:
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+
 with open("./json/train_para_"+train_para["para_name"]+".json", "w") as outfile:  
     json.dump(train_para, outfile) 
 
 #######################
 
 def train():
-    # set fixed random seed for repeatability
 
     print(train_para)
 
@@ -86,13 +89,17 @@ def train():
     niftiGen_augment_opts.hflips = True
     niftiGen_augment_opts.vflips = True
     niftiGen_augment_opts.rotations = 15
-    niftiGen_augment_opts.scalings = 0
+    niftiGen_augment_opts.scalings = 0.25
     niftiGen_augment_opts.shears = 0
     niftiGen_augment_opts.translations = 10
     print(niftiGen_augment_opts)
     niftiGen_norm_opts = NiftiGenerator.PairedNiftiGenerator.get_default_normOptions()
-    niftiGen_norm_opts.normXtype = 'none'
-    niftiGen_norm_opts.normYtype = 'none'
+    niftiGen_norm_opts.normXtype = 'fixed'
+    niftiGen_norm_opts.normXoffset = 0
+    niftiGen_norm_opts.normXscale = 6000
+    niftiGen_norm_opts.normYtype = 'fixed'
+    niftiGen_norm_opts.normYoffset = -1000
+    niftiGen_norm_opts.normYscale = 4000
     print(niftiGen_norm_opts)
 
     folderX = "./data_train/"+train_para["x_data_folder"]
@@ -118,9 +125,6 @@ def train():
                                     Xslice_samples=train_para["channel_X"],
                                     Yslice_samples=train_para["channel_Y"],
                                     batch_size=train_para["batch_size"])
-    # for test_data in generatorV:
-    #     dataX, dataY = test_data
-    #     print(dataX.shape, dataY.shape)
 
     print('-'*50)
     print('Preparing callbacks...')
@@ -131,7 +135,7 @@ def train():
                                        save_best_only=True)
     tensorboard = TensorBoard(log_dir=os.path.join('tblogs','{}'.format(time())))
     display_progress = LambdaCallback(on_epoch_end= lambda epoch,
-                                      logs: progresscallback_img2img_multiple(epoch, logs, model, history, fig, generatorV) )
+                                      logs: progresscallback_img2img(epoch, logs, model, history, fig, generatorV) )
 
     print('-'*50)
     print('Fitting network...')
@@ -144,7 +148,7 @@ def train():
               initial_epoch=train_para["initial_epoch"],
               validation_data=generatorV,
               validation_steps=100,
-              callbacks=[history, model_checkpoint] ) # , display_progress
+              callbacks=[history, model_checkpoint, display_progress] ) # , display_progress
 
     dataset_go_back(folder_list, sub_folder_list)
     os.system("mkdir "+train_para["para_name"])
@@ -185,24 +189,9 @@ def split_dataset(folderX, folderY, validation_ratio):
     valid_folderX = folderX + "/validX/"
     valid_folderY = folderY + "/validY/"
 
-    if not os.path.exists(train_folderX):
-        os.makedirs(train_folderX)
-    if not os.path.exists(train_folderY):
-        os.makedirs(train_folderY)
-    if not os.path.exists(valid_folderX):
-        os.makedirs(valid_folderX)
-    if not os.path.exists(valid_folderY):
-        os.makedirs(valid_folderY)
-
-    # data_trainX_list.sort()
-    # data_validX_list.sort()
-    # data_trainY_list.sort()
-    # data_validY_list.sort()
-
-    # print(data_trainX_list)
-    # print(data_validX_list)
-    # print(data_trainY_list)
-    # print(data_validY_list)
+    for folder_name in [train_folderX, train_folderY, valid_folderX, valid_folderY]:
+        if not os.path.exists(folder_name):
+            os.makedirs(folder_name)
 
     data_path_list = glob.glob(folderX+"/*.nii") + glob.glob(folderX+"/*.nii.gz")
     data_path_list.sort()
@@ -245,52 +234,6 @@ def split_dataset(folderX, folderY, validation_ratio):
 
     return [train_folderX, train_folderY, valid_folderX, valid_folderY]
 
-
-def progresscallback_img2img_multiple(epoch, logs, model, history, fig, generatorV):
-
-    fig.clf()
-
-    for data in generatorV:
-        dataX, dataY = data
-        print(dataX.shape, dataY.shape)
-        sliceX = dataX.shape[3]
-        sliceY = dataY.shape[3]
-        break
-
-    predY = model.predict(dataX)
-
-    for idx in range(8):
-
-        plt.figure(figsize=(20, 6), dpi=300)
-        plt.subplot(1, 3, 1)
-        plt.imshow(np.rot90(np.squeeze(dataX[idx, :, :, sliceX//2])),cmap='gray')
-        plt.axis('off')
-        plt.title('input X[0]')
-
-        plt.subplot(1, 3, 2)
-        plt.imshow(np.rot90(np.squeeze(dataY[idx, :, :, sliceY//2])),cmap='gray')
-        plt.axis('off')
-        plt.title('target Y[0]')
-
-        plt.subplot(1, 3, 3)
-        plt.imshow(np.rot90(np.squeeze(predY[idx, :, :, sliceY//2])),cmap='gray')
-        plt.axis('off')
-        plt.title('pred. at ' + repr(epoch+1))
-
-        plt.savefig('progress_image_{0}_{1:05d}_samples_{1:02d}.jpg'.format(train_para["jpgprogressfile_name"], epoch+1, idx+1))
-
-    plt.figure(figsize=(8, 6), dpi=300)
-    plt.plot(range(epoch+1),history.history['loss'],'b',label='training loss')
-    plt.plot(range(epoch+1),history.history['val_loss'],'r',label='validation loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.yscale('log')
-    plt.legend()
-    plt.title('Losses')
-    fig.tight_layout()
-    plt.savefig('progress_image_{0}_{1:05d}_loss.jpg'.format(train_para["jpgprogressfile_name"], epoch+1))
-
-
 # Function to display the target and prediction
 def progresscallback_img2img(epoch, logs, model, history, fig, generatorV):
 
@@ -304,22 +247,27 @@ def progresscallback_img2img(epoch, logs, model, history, fig, generatorV):
         break
 
     predY = model.predict(dataX)
+    n_batch = train_para["batch_size"]
 
-    for idx in range(4):
-        a = fig.add_subplot(4, 4, idx+5)
+    plt.figure(dpi=200)
+    for idx in range(n_batch):
+        plt.subplot(n_batch, 3, n_batch*3+1)
         plt.imshow(np.rot90(np.squeeze(dataX[idx, :, :, sliceX//2])),cmap='gray')
         a.axis('off')
         a.set_title('input X[0]')
-        a = fig.add_subplot(4, 4, idx+9)
+
+        plt.subplot(n_batch, 3, n_batch*3+2)
         plt.imshow(np.rot90(np.squeeze(dataY[idx, :, :, sliceY//2])),cmap='gray')
         a.axis('off')
         a.set_title('target Y[0]')
-        a = fig.add_subplot(4, 4, idx+13)
+
+        plt.subplot(n_batch, 3, n_batch*3+3)
         plt.imshow(np.rot90(np.squeeze(predY[idx, :, :, sliceY//2])),cmap='gray')
         a.axis('off')
         a.set_title('pred. at ' + repr(epoch+1))
+    fig.savefig('progress_image_{0}_{1:05d}.jpg'.format(train_para["jpgprogressfile_name"],epoch+1))
 
-    a = fig.add_subplot(4, 1, 1)
+    plt.figure(dpi=200)
     plt.plot(range(epoch+1),history.history['loss'],'b',label='training loss')
     plt.plot(range(epoch+1),history.history['val_loss'],'r',label='validation loss')
     plt.ylabel('loss')
@@ -329,7 +277,7 @@ def progresscallback_img2img(epoch, logs, model, history, fig, generatorV):
     a.set_title('Losses')
     fig.tight_layout()
     fig.canvas.draw()
-    fig.savefig('progress_image_{0}_{1:05d}.jpg'.format(train_para["jpgprogressfile_name"],epoch+1))
+    fig.savefig('progress_loss_{0}_{1:05d}.jpg'.format(train_para["jpgprogressfile_name"],epoch+1))
     fig.canvas.flush_events()
 
 if __name__ == '__main__':
