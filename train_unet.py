@@ -53,6 +53,7 @@ def CT_norm(data):
     data[data<-1000] = -1000
     data[data>3000] = 3000
     data = (data + 1000) / 4000
+    print(data.shape)
     return data
 
 def train():
