@@ -21,6 +21,8 @@ train_para ={
     "para_name" : para_name,
     "img_rows" : 512, # image is resampled to this size
     "img_cols" : 512, # image is resampled to this size
+    "input_rows" : 192,
+    "input_cols" : 192,
     "channel_X" : 5,
     "channel_Y" : 1,
     "start_ch" : 64,
@@ -65,9 +67,12 @@ def train():
     model = Unet.UNetContinuous(img_shape=(train_para["img_rows"],
                                            train_para["img_cols"],
                                            train_para["channel_X"]),
-                                 out_ch=train_para["channel_Y"],
-                                 start_ch=train_para["start_ch"],
-                                 depth=train_para["depth"])
+                                input_shape=(train_para["input_rows"],
+                                             train_para["input_cols"],
+                                             train_para["channel_X"]),
+                                out_ch=train_para["channel_Y"],
+                                start_ch=train_para["start_ch"],
+                                depth=train_para["depth"])
     model.compile(optimizer=Adam(lr=1e-4),
                   loss=loss,
                   metrics=[mean_squared_error,mean_absolute_error])
@@ -80,7 +85,6 @@ def train():
     # optionally load weights
     if train_para["load_weights"]:
         model.load_weights(train_para["save_folder"]+train_para["weightfile_name"])
-
 
     print('-'*50)
     print('Setting up NiftiGenerator')
@@ -214,7 +218,7 @@ def split_dataset(folderX, folderY, validation_ratio):
 
     for valid_name in valid_list:
         valid_nameX = folderX+"/"+valid_name
-        valid_nameY = folderY+"/"+valid_name.replace("NACB", "CTAC")
+        valid_nameY = folderY+"/"+valid_name.replace("NP", "CT")
         cmdX = "mv "+valid_nameX+" "+valid_folderX
         cmdY = "mv "+valid_nameY+" "+valid_folderY
         print(cmdX)
@@ -224,7 +228,7 @@ def split_dataset(folderX, folderY, validation_ratio):
 
     for train_name in train_list:
         train_nameX = folderX+"/"+train_name
-        train_nameY = folderY+"/"+train_name.replace("NACB", "CTAC")
+        train_nameY = folderY+"/"+train_name.replace("NP", "CT")
         cmdX = "mv "+train_nameX+" "+train_folderX
         cmdY = "mv "+train_nameY+" "+train_folderY
         print(cmdX)
