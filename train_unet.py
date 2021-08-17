@@ -254,20 +254,20 @@ def progresscallback_img2img(epoch, logs, model, history, fig, generatorV):
 
     plt.figure(dpi=200)
     for idx in range(n_batch):
-        print("subplot ", n_batch, 3, n_batch*3+1)
-        plt.subplot(n_batch, 3, n_batch*3+1)
+        print("subplot ", idx*3+1)
+        plt.subplot(n_batch, 3, idx*3+1)
         plt.imshow(np.rot90(np.squeeze(dataX[idx, :, :, sliceX//2])),cmap='gray')
         a.axis('off')
         a.set_title('input X[0]')
 
-        print("subplot ", n_batch, 3, n_batch*3+2)
-        plt.subplot(n_batch, 3, n_batch*3+2)
+        print("subplot ", idx*3+2)
+        plt.subplot(n_batch, 3, idx*3+2)
         plt.imshow(np.rot90(np.squeeze(dataY[idx, :, :, sliceY//2])),cmap='gray')
         a.axis('off')
         a.set_title('target Y[0]')
 
-        print("subplot ", n_batch, 3, n_batch*3+3)
-        plt.subplot(n_batch, 3, n_batch*3+3)
+        print("subplot ", idx*3+3)
+        plt.subplot(n_batch, 3, idx*3+3)
         plt.imshow(np.rot90(np.squeeze(predY[idx, :, :, sliceY//2])),cmap='gray')
         a.axis('off')
         a.set_title('pred. at ' + repr(epoch+1))
