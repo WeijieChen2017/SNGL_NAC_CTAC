@@ -480,6 +480,8 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 batch_Y[i,:,:,:] = YimgSlices
 
             print("-"*25)
-            print("batch_X: ", np.mean(batch_X), np.std(batch_X))
-            print("batch_X: ", np.mean(batch_Y), np.std(batch_Y))
+            print("batch_X mean std: ", np.mean(batch_X), np.std(batch_X))
+            print("batch_X min max: ", np.amin(batch_X), np.amax(batch_X))
+            print("batch_Y mean std: ", np.mean(batch_Y), np.std(batch_Y))
+            print("batch_Y min max: ", np.amin(batch_Y), np.amax(batch_Y))
             yield (batch_X , batch_Y)
