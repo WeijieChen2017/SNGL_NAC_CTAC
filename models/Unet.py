@@ -1,7 +1,6 @@
 from tensorflow.keras import Input
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, MaxPooling2D, UpSampling2D, Dropout, BatchNormalization, Masking
-from tensorflow.keras.layers import Resizing
 
 '''
 from: https://github.com/pietz/unet-keras/blob/master/unet.py
@@ -56,10 +55,9 @@ def UNet(img_shape, out_ch=1, start_ch=64, depth=4, inc_rate=2., activation='rel
     o = Conv2D(out_ch, 1, activation='sigmoid')(o)
     return Model(inputs=i, outputs=o)
 
-def UNetContinuous(img_shape, input_shape, out_ch=1, start_ch=64, depth=4, inc_rate=2., activation='relu',
+def UNetContinuous(img_shape, out_ch=1, start_ch=64, depth=4, inc_rate=2., activation='relu',
          dropout=0.5, batchnorm=False, maxpool=True, upconv=True, residual=False):
-    i = Input(shape=input_shape)
-    i = Resizing(img_shape[0], img_shape[1], interpolation='bicubic', crop_to_aspect_ratio=False)(i)
+    i = Input(shape=img_shape)
     o = level_block(i, start_ch, depth, inc_rate, activation, dropout, batchnorm, maxpool, upconv, residual)
     o = Concatenate()([i, o])
     o = Conv2D(out_ch, 1, activation='sigmoid')(o)

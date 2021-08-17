@@ -21,8 +21,6 @@ train_para ={
     "para_name" : para_name,
     "img_rows" : 512, # image is resampled to this size
     "img_cols" : 512, # image is resampled to this size
-    "input_rows" : 192,
-    "input_cols" : 192,
     "channel_X" : 5,
     "channel_Y" : 1,
     "start_ch" : 64,
@@ -67,9 +65,6 @@ def train():
     model = Unet.UNetContinuous(img_shape=(train_para["img_rows"],
                                            train_para["img_cols"],
                                            train_para["channel_X"]),
-                                input_shape=(train_para["input_rows"],
-                                             train_para["input_cols"],
-                                             train_para["channel_X"]),
                                 out_ch=train_para["channel_Y"],
                                 start_ch=train_para["start_ch"],
                                 depth=train_para["depth"])
