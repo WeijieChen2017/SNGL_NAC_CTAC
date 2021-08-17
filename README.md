@@ -1,2 +1,1 @@
-# SNGL_NAC_CTAC
-Single NAC PET based CT attenuation correction
+# Alan_pet_psf_gibbs
