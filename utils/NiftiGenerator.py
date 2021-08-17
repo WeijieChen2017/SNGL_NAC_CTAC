@@ -4,6 +4,7 @@ from glob import glob
 import types
 import os
 import sys
+import time
 import numpy as np
 import logging
 from scipy.ndimage import affine_transform
@@ -383,6 +384,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
 
             for i in range(batch_size):
                 # get a random subject
+                time_load = time.time()
                 j = np.random.randint( 0, len(self.inputFilesX) )
                 currImgFileX = self.inputFilesX[j]
                 currImgFileY = self.inputFilesY[j]
@@ -416,6 +418,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                     sys.exit(1) 
                 module_logger.debug( 'sampling range is {}'.format(z) )
 
+                time_norm = time.time()
                  # handle input data normalization and sampling
                 if self.normOptions.normXtype == 'function'.lower():
                     # normalization is performed via a specified function
@@ -465,6 +468,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 if YimgSlices.ndim == 2:
                     YimgSlices = YimgSlices[...,np.newaxis]
 
+                time_aug = time.time()
                 # augmentation here
                 M = self.get_augment_transform()
                 XimgSlices = self.do_augment( XimgSlices, M )
@@ -478,10 +482,14 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 # put into data array for batch for this batch of samples
                 batch_X[i,:,:,:] = XimgSlices
                 batch_Y[i,:,:,:] = YimgSlices
+                time_output = time.time()
 
             print("-"*25)
             print("batch_X mean std: ", np.mean(batch_X), np.std(batch_X))
             print("batch_X min max: ", np.amin(batch_X), np.amax(batch_X))
             print("batch_Y mean std: ", np.mean(batch_Y), np.std(batch_Y))
             print("batch_Y min max: ", np.amin(batch_Y), np.amax(batch_Y))
+            print("Time load:", time_norm - time_load)
+            print("Time norm:", time_aug - time_norm)
+            print("Time aug:", time_output - time_aug)
             yield (batch_X , batch_Y)
