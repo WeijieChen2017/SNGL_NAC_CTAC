@@ -28,7 +28,7 @@ train_para ={
     "validation_split" : 0.2,
     "loss" : "l1",
     "x_data_folder" : 'NAC_SRC',
-    "y_data_folder" : 'CTAC_SRC',
+    "y_data_folder" : 'CT_SRC',
     "weightfile_name" : 'weights_'+para_name+'.h5',
     "model_name" : 'model_'+para_name+'.json',
     "save_folder" : './save_models/',
