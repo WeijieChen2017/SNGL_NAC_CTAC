@@ -236,7 +236,9 @@ def split_dataset(folderX, folderY, validation_ratio):
 # Function to display the target and prediction
 def progresscallback_img2img(epoch, logs, model, history, fig, generatorV):
 
-    fig.clf()
+    print("-"*50)
+    print("Progress evaluation begins:")
+    print("-"*50)
 
     for data in generatorV:
         dataX, dataY = data
@@ -245,26 +247,33 @@ def progresscallback_img2img(epoch, logs, model, history, fig, generatorV):
         sliceY = dataY.shape[3]
         break
 
+    print("Prediction generates.")
+
     predY = model.predict(dataX)
     n_batch = train_para["batch_size"]
 
     plt.figure(dpi=200)
     for idx in range(n_batch):
+        print("subplot ", n_batch, 3, n_batch*3+1)
         plt.subplot(n_batch, 3, n_batch*3+1)
         plt.imshow(np.rot90(np.squeeze(dataX[idx, :, :, sliceX//2])),cmap='gray')
         a.axis('off')
         a.set_title('input X[0]')
 
+        print("subplot ", n_batch, 3, n_batch*3+2)
         plt.subplot(n_batch, 3, n_batch*3+2)
         plt.imshow(np.rot90(np.squeeze(dataY[idx, :, :, sliceY//2])),cmap='gray')
         a.axis('off')
         a.set_title('target Y[0]')
 
+        print("subplot ", n_batch, 3, n_batch*3+3)
         plt.subplot(n_batch, 3, n_batch*3+3)
         plt.imshow(np.rot90(np.squeeze(predY[idx, :, :, sliceY//2])),cmap='gray')
         a.axis('off')
         a.set_title('pred. at ' + repr(epoch+1))
     fig.savefig('progress_image_{0}_{1:05d}.jpg'.format(train_para["jpgprogressfile_name"],epoch+1))
+    fig.canvas.flush_events()
+    print('progress_image_{0}_{1:05d}.jpg saved'.format(train_para["jpgprogressfile_name"],epoch+1))
 
     plt.figure(dpi=200)
     plt.plot(range(epoch+1),history.history['loss'],'b',label='training loss')
@@ -278,6 +287,7 @@ def progresscallback_img2img(epoch, logs, model, history, fig, generatorV):
     fig.canvas.draw()
     fig.savefig('progress_loss_{0}_{1:05d}.jpg'.format(train_para["jpgprogressfile_name"],epoch+1))
     fig.canvas.flush_events()
+    print('progress_loss_{0}_{1:05d}.jpg saved'.format(train_para["jpgprogressfile_name"],epoch+1))
 
 if __name__ == '__main__':
     train()
