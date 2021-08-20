@@ -522,7 +522,6 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                     if self.currSizeBufferPool == self.maxSizeBufferPool:
                         # kick out the largest case
                         largest_idx = self.memoryPool.index(max(self.memoryPool))
-                        del self.bufferPool[largest_idx]
                         self.bufferPool[largest_idx] = None
                         self.memoryPool[largest_idx] = 0
 
