@@ -391,60 +391,61 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             if self.normOptions.normXtype == 'function'.lower():
                 # normalization is performed via a specified function
                 # get normalized data (and read whole volume)
-                tmpX = self.normOptions.normXfunction( Ximg.get_fdata() )
+                Xdata = self.normOptions.normXfunction( Xdata )
             else:
                 # type is none, auto, or fixed
                 # prepare normalization
-                # if not self.normXready[j]:
-                tmpX = Ximg.get_fdata()
-                self.normXoffset[j] = np.mean( tmpX )
-                self.normXscale[j] = np.std( tmpX )
-                self.normXready[j] = True
-                tmpX = (tmpX - self.normXoffset[j]) / self.normXscale[j] 
+                if not self.normXready[j]:
+                    self.normXoffset[j] = np.mean( Xdata )
+                    self.normXscale[j] = np.std( Xdata )
+                    self.normXready[j] = True
+                Xdata = (Xdata - self.normXoffset[j]) / self.normXscale[j] 
 
             if self.normOptions.normYtype == 'function'.lower():
                 # normalization is performed via a specified function
                 # get normalized data (and read whole volume)
-                tmpY = self.normOptions.normYfunction( Yimg.get_fdata() )
+                Ydata = self.normOptions.normYfunction( Ydata )
             else:
                 # type is none, auto, or fixed
                 # prepare normalization                    
-                # if not self.normYready[j]:
-                tmpY = Yimg.get_fdata()
-                self.normYoffset[j] = np.mean( tmpY )
-                self.normYscale[j] = np.std( tmpY )
-                self.normYready[j] = True
-                tmpY = (tmpY - self.normYoffset[j]) / self.normYscale[j]
+                if not self.normYready[j]:
+                    self.normYoffset[j] = np.mean( Ydata )
+                    self.normYscale[j] = np.std( Ydata )
+                    self.normYready[j] = True
+                Ydata = (Ydata - self.normYoffset[j]) / self.normYscale[j]
 
-            print("batch_X mean std: ", np.mean(tmpX), np.std(tmpX))
-            print("batch_X min max: ", np.amin(tmpX), np.amax(tmpX))
-            print("batch_Y mean std: ", np.mean(tmpY), np.std(tmpY))
-            print("batch_Y min max: ", np.amin(tmpY), np.amax(tmpY))
+            print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
+            print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
+            print("batch_Y mean std: ", np.mean(Ydata), np.std(Ydata))
+            print("batch_Y min max: ", np.amin(Ydata), np.amax(Ydata))
 
 
             filenameX = os.path.basename(currImgFileX)
+            filenameY = os.path.basename(currImgFileY)
             savenameX = os.path.join(self.normOptions.normXtempFolder, 
                                      filenameX[:filenameX.find(".")]+
                                      "_normX_"+self.normOptions.normXtype+".hdf5")
-            # fileX = h5py.File(savenameX, "w")
-            self.normFileX.append(savenameX)
-            # fileX.create_dataset("data", data=tmpX.astype(np.double))
-            # for key, value in Ximg.header.items():
-                # fileX[key] = value
-            # fileX.close()
-            # print(savenameX, " saved.")
-
-            filenameY = os.path.basename(currImgFileY)
             savenameY = os.path.join(self.normOptions.normYtempFolder, 
                                      filenameY[:filenameY.find(".")]+
                                      "_normY_"+self.normOptions.normYtype+".hdf5")
-            # fileY = h5py.File(savenameY, "w")
+            self.normFileX.append(savenameX)
             self.normFileY.append(savenameY)
-            # fileY.create_dataset("data", data=tmpY.astype(np.double))
-            # for key, value in Yimg.header.items():
-                # fileY[key] = value
-            # fileY.close()
-            # print(savenameY, " saved.")
+
+
+            fileX = h5py.File(savenameX, "w")
+            fileX.create_dataset("data", data=Xdata.astype(np.double))
+            for key, value in Ximg.header.items():
+                fileX[key] = value
+            fileX.close()
+            print(savenameX, " saved.")
+
+
+            fileY = h5py.File(savenameY, "w")
+            fileY.create_dataset("data", data=Ydata.astype(np.double))
+            for key, value in Yimg.header.items():
+                fileY[key] = value
+            fileY.close()
+            print(savenameY, " saved.")
 
     def get_default_normOptions():
         normOptions = types.SimpleNamespace()
