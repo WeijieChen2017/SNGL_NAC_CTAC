@@ -34,10 +34,12 @@ train_para ={
     "save_folder" : './save_models/',
     "jpgprogressfile_name" : 'progress_'+para_name,
     "batch_size" : 2, # should be smallish. 1-10
-    "num_epochs" : 20, # should train for at least 100-200 in total
+    "num_epochs" : 20cd , # should train for at least 100-200 in total
     "steps_per_epoch" : 30*160, # should be enough to be equal to one whole pass through the dataset
     "initial_epoch" : 0, # for resuming training
     "load_weights" : False, # load trained weights for resuming training
+    "buffer_pool_T" : 16,
+    "buffer_pool_V" : 1,
 }  
 
 for folder_name in ["json", "save_models", "results"]:
@@ -131,7 +133,8 @@ def train():
     generatorT = niftiGenT.generate(img_size=(train_para["img_rows"],train_para["img_cols"]),
                                     Xslice_samples=train_para["channel_X"],
                                     Yslice_samples=train_para["channel_Y"],
-                                    batch_size=train_para["batch_size"])
+                                    batch_size=train_para["batch_size"],
+                                    buffer_pool=train_para["buffer_pool_T"])
 
     niftiGenV = NiftiGenerator.PairedNiftiGenerator()
     niftiGenV.initialize(valid_folderX, valid_folderY,
@@ -139,8 +142,8 @@ def train():
     generatorV = niftiGenV.generate(img_size=(train_para["img_rows"],train_para["img_cols"]),
                                     Xslice_samples=train_para["channel_X"],
                                     Yslice_samples=train_para["channel_Y"],
-                                    batch_size=train_para["batch_size"])
-
+                                    batch_size=train_para["batch_size"],
+                                    buffer_pool=train_para["buffer_pool_V"])
     print('-'*50)
     print('Preparing callbacks...')
     print('-'*50)

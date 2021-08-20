@@ -282,7 +282,9 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
     normFileX = []
     normFileY = []
 
-    def initialize(self, inputX, inputY, augOptions=None, normOptions=None):
+    buffer_pool = 1
+
+    def initialize(self, inputX, inputY, augOptions=None, normOptions=None, buffer_pool=1):
 
         # if input is a list, let's just use that
         # otherwise consider this input as a folder
@@ -358,6 +360,12 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         for folder_name in [self.normOptions.normXtempFolder, self.normOptions.normYtempFolder]:
             if not os.path.exists(folder_name):
                 os.makedirs(folder_name)
+
+        # if the data is load and store in the buffer pool, it will be load from memory if reused.
+        self.maxSizeBufferPool = buffer_pool - 1
+        self.currSizeBufferPool = 0
+        self.bufferPool = [None] * self.inputFilesX
+        self.memoryPool = [0] * self.inputFilesX
 
         # Normalize data and save
         print("-"*50)
@@ -502,20 +510,42 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 # get a random subject
                 # time_load = time.time()
                 j = np.random.randint( 0, len(self.normFileX) )
-                currImgFileX = self.normFileX[j]
-                currImgFileY = self.normFileX[j]
 
-                # load nifti header
-                module_logger.debug( 'reading files {}, {}'.format(currImgFileX,currImgFileY) )
+                # buffer pool
+                if self.memoryPool[j] > 0:
+                    # this case has been loaded
+                    currNormDataX = self.bufferPool[j][0]
+                    currNormDataY = self.bufferPool[j][1]
+                    XimgShape = self.bufferPool[j][2]
+                    YimgShape = self.bufferPool[j][3]
+                else:
+                    if self.currSizeBufferPool == self.maxSizeBufferPool:
+                        # kick out the largest case
+                        largest_idx = self.memoryPool.index(max(self.memoryPool))
+                        del self.bufferPool[largest_idx]
+                        self.bufferPool[largest_idx] = None
+                        self.memoryPool[largest_idx] = 0
 
-                currNormFileX = h5py.File(currImgFileX, 'r')
-                currNormFileY = h5py.File(currImgFileY, 'r')
+                    # load new case
+                    currImgFileX = self.normFileX[j]
+                    currImgFileY = self.normFileX[j]
 
-                currNormDataX = currNormFileX["data"]
-                currNormDataY = currNormFileY["data"]
+                    # load nifti header
+                    module_logger.debug( 'reading files {}, {}'.format(currImgFileX,currImgFileY) )
 
-                XimgShape = currNormDataX.shape
-                YimgShape = currNormDataY.shape
+                    currNormFileX = h5py.File(currImgFileX, 'r')
+                    currNormFileY = h5py.File(currImgFileY, 'r')
+
+                    currNormDataX = currNormFileX["data"]
+                    currNormDataY = currNormFileY["data"]
+
+                    XimgShape = currNormDataX.shape
+                    YimgShape = currNormDataY.shape
+
+                    # save to the buffer pool
+                    self.bufferPool[j] = [currNormDataX, currNormDataY, XimgShape, YimgShape]
+                    self.memoryPool[j] = sys.getsizeof(bufferPool[j])
+                    self.currSizeBufferPool += 1
 
                 # Ximg = nib.load( currImgFileX )
                 # Yimg = nib.load( currImgFileY )
@@ -575,7 +605,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 batch_X[batch_X < 0] = 0
                 batch_Y[batch_Y < 0] = 0
 
-            print("-"*25)
+            # print("-"*25)
             # print("batch_X mean std: ", np.mean(batch_X), np.std(batch_X))
             # print("batch_X min max: ", np.amin(batch_X), np.amax(batch_X))
             # print("batch_Y mean std: ", np.mean(batch_Y), np.std(batch_Y))
