@@ -373,6 +373,11 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             Ximg = nib.load( currImgFileX )
             Yimg = nib.load( currImgFileY )
 
+            print("batch_X mean std: ", np.mean(Ximg), np.std(Ximg))
+            print("batch_X min max: ", np.amin(Ximg), np.amax(Ximg))
+            print("batch_Y mean std: ", np.mean(Yimg), np.std(Yimg))
+            print("batch_Y min max: ", np.amin(Yimg), np.amax(Yimg))
+
             XimgShape = Ximg.header.get_data_shape()
             YimgShape = Yimg.header.get_data_shape()
 
@@ -407,6 +412,12 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 self.normYscale[j] = np.std( tmpY )
                 self.normYready[j] = True
                 tmpY = (tmpY - self.normYoffset[j]) / self.normYscale[j]
+
+            print("batch_X mean std: ", np.mean(tmpX), np.std(tmpX))
+            print("batch_X min max: ", np.amin(tmpX), np.amax(tmpX))
+            print("batch_Y mean std: ", np.mean(tmpY), np.std(tmpY))
+            print("batch_Y min max: ", np.amin(tmpY), np.amax(tmpY))
+
 
             filenameX = os.path.basename(currImgFileX)
             savenameX = os.path.join(self.normOptions.normXtempFolder, 
@@ -507,9 +518,6 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
 
                 # XimgShape = Ximg.header.get_data_shape()
                 # YimgShape = Yimg.header.get_data_shape()
-
-                if not XimgShape == YimgShape:
-                    module_logger.warning('input data ({} and {}) is not the same size. this may lead to unexpected results or errors!'.format(currImgFileX,currImgFileY))
 
                 max_slice = max(Xslice_samples, Yslice_samples)
                 imgshape2 = min(XimgShape[2], YimgShape[2])
