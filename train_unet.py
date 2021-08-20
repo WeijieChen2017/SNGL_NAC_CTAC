@@ -131,21 +131,19 @@ def train():
 
     niftiGenT = NiftiGenerator.PairedNiftiGenerator()
     niftiGenT.initialize(train_folderX, train_folderY,
-                         niftiGen_augment_opts, niftiGen_norm_opts)
+                         niftiGen_augment_opts, niftiGen_norm_opts, buffer_pool=train_para["buffer_pool_T"])
     generatorT = niftiGenT.generate(img_size=(train_para["img_rows"],train_para["img_cols"]),
                                     Xslice_samples=train_para["channel_X"],
                                     Yslice_samples=train_para["channel_Y"],
-                                    batch_size=train_para["batch_size"],
-                                    buffer_pool=train_para["buffer_pool_T"])
+                                    batch_size=train_para["batch_size"])
 
     niftiGenV = NiftiGenerator.PairedNiftiGenerator()
     niftiGenV.initialize(valid_folderX, valid_folderY,
-                         niftiGen_augment_opts, niftiGen_norm_opts )
+                         niftiGen_augment_opts, niftiGen_norm_opts, buffer_pool=train_para["buffer_pool_V"] )
     generatorV = niftiGenV.generate(img_size=(train_para["img_rows"],train_para["img_cols"]),
                                     Xslice_samples=train_para["channel_X"],
                                     Yslice_samples=train_para["channel_Y"],
-                                    batch_size=train_para["batch_size"],
-                                    buffer_pool=train_para["buffer_pool_V"])
+                                    batch_size=train_para["batch_size"])
     print('-'*50)
     print('Preparing callbacks...')
     print('-'*50)
