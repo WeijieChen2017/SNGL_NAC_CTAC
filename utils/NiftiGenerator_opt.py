@@ -563,11 +563,11 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 batch_X[batch_X < 0] = 0
                 batch_Y[batch_Y < 0] = 0
 
-            # print("-"*25)
-            # print("batch_X mean std: ", np.mean(batch_X), np.std(batch_X))
-            # print("batch_X min max: ", np.amin(batch_X), np.amax(batch_X))
-            # print("batch_Y mean std: ", np.mean(batch_Y), np.std(batch_Y))
-            # print("batch_Y min max: ", np.amin(batch_Y), np.amax(batch_Y))
+            print("-"*25)
+            print("batch_X mean std: ", np.mean(batch_X), np.std(batch_X))
+            print("batch_X min max: ", np.amin(batch_X), np.amax(batch_X))
+            print("batch_Y mean std: ", np.mean(batch_Y), np.std(batch_Y))
+            print("batch_Y min max: ", np.amin(batch_Y), np.amax(batch_Y))
             # print("Time load:", time_norm - time_load)
             # print("Time norm:", time_aug - time_norm)
             # print("Time aug:", time_output - time_aug)

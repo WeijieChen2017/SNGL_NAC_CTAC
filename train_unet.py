@@ -94,9 +94,9 @@ def train():
     niftiGen_augment_opts.hflips = True
     niftiGen_augment_opts.vflips = True
     niftiGen_augment_opts.rotations = 15
-    niftiGen_augment_opts.scalings = 0.25
+    niftiGen_augment_opts.scalings = 0
     niftiGen_augment_opts.shears = 0
-    niftiGen_augment_opts.translations = 10
+    niftiGen_augment_opts.translations = 0
     print(niftiGen_augment_opts)
     niftiGen_norm_opts = NiftiGenerator.PairedNiftiGenerator.get_default_normOptions()
     niftiGen_norm_opts.normXtype = 'fixed'
