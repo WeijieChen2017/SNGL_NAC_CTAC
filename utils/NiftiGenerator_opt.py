@@ -374,6 +374,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
 
         for j in range(len(self.inputFilesX)):
 
+            print(j)
             currImgFileX = self.inputFilesX[j]
             currImgFileY = self.inputFilesY[j]
 
@@ -387,7 +388,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                                      "_normY_"+self.normOptions.normYtype+".hdf5")
             self.normFileX.append(savenameX)
             self.normFileY.append(savenameY)
-
+            print(len(self.normFileX))
             if not self.normOptions.prenorm:
                 
                 # load nifti header
