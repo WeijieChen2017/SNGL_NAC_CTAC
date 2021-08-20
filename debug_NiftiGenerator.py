@@ -5,7 +5,7 @@ import glob
 import json
 import numpy as np
 from time import time
-from utils import NiftiGenerator
+from utils import NiftiGenerator_opt as NiftiGenerator
 
 def CT_norm(data):
     data[data<-1000] = -1000
