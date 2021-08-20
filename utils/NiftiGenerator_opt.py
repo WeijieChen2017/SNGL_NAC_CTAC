@@ -412,25 +412,25 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             savenameX = os.path.join(self.normOptions.normXtempFolder, 
                                      filenameX[:filenameX.find(".")]+
                                      "_normX_"+self.normOptions.normXtype+".hdf5")
-            fileX = h5py.File(savenameX, "w")
+            # fileX = h5py.File(savenameX, "w")
             self.normFileX.append(savenameX)
-            fileX.create_dataset("data", data=tmpX.astype(np.double))
-            for key, value in Ximg.header.items():
-                fileX[key] = value
-            fileX.close()
-            print(savenameX, " saved.")
+            # fileX.create_dataset("data", data=tmpX.astype(np.double))
+            # for key, value in Ximg.header.items():
+                # fileX[key] = value
+            # fileX.close()
+            # print(savenameX, " saved.")
 
             filenameY = os.path.basename(currImgFileY)
             savenameY = os.path.join(self.normOptions.normYtempFolder, 
                                      filenameY[:filenameY.find(".")]+
                                      "_normY_"+self.normOptions.normYtype+".hdf5")
-            fileY = h5py.File(savenameY, "w")
+            # fileY = h5py.File(savenameY, "w")
             self.normFileY.append(savenameY)
-            fileY.create_dataset("data", data=tmpY.astype(np.double))
-            for key, value in Yimg.header.items():
-                fileY[key] = value
-            fileY.close()
-            print(savenameY, " saved.")
+            # fileY.create_dataset("data", data=tmpY.astype(np.double))
+            # for key, value in Yimg.header.items():
+                # fileY[key] = value
+            # fileY.close()
+            # print(savenameY, " saved.")
 
     def get_default_normOptions():
         normOptions = types.SimpleNamespace()
@@ -529,8 +529,8 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 module_logger.debug( 'sampling range is {}'.format(z) )
 
                 # time_norm = time.time()
-                XimgSlices = tmpX[:,:,z-Xslice_samples//2:z+Xslice_samples//2+1]
-                YimgSlices = tmpY[:,:,z-Yslice_samples//2:z+Yslice_samples//2+1]
+                XimgSlices = currNormDataX[:,:,z-Xslice_samples//2:z+Xslice_samples//2+1]
+                YimgSlices = currNormDataY[:,:,z-Yslice_samples//2:z+Yslice_samples//2+1]
                 
                 # resize to fixed size for model (note img is resized with CUBIC)
                 XimgSlices = cv2.resize( XimgSlices, dsize=(img_size[1],img_size[0]), interpolation = self.normOptions.normXinterp)
