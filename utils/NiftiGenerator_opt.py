@@ -397,7 +397,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         print("Normalize data, and save as hdf5.")
         print("-"*50)
 
-        for idx in j in range(len(self.inputFilesX)):
+        for j in range(len(self.inputFilesX)):
             currImgFileX = self.inputFilesX[j]
             currImgFileY = self.inputFilesY[j]
 
