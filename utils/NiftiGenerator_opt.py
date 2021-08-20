@@ -364,8 +364,8 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         # if the data is load and store in the buffer pool, it will be load from memory if reused.
         self.maxSizeBufferPool = buffer_pool - 1
         self.currSizeBufferPool = 0
-        self.bufferPool = [None] * self.inputFilesX
-        self.memoryPool = [0] * self.inputFilesX
+        self.bufferPool = [None] * num_Xfiles
+        self.memoryPool = [0] * num_Xfiles
 
         # Normalize data and save
         print("-"*50)
