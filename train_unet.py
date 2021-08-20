@@ -15,7 +15,7 @@ from tensorflow.keras.optimizers import Adam
 from models import Unet
 from utils import NiftiGenerator_opt as NiftiGenerator
 
-para_name = "exper01"
+para_name = "exper02"
 # Data to be written  
 train_para ={  
     "para_name" : para_name,
@@ -40,7 +40,8 @@ train_para ={
     "load_weights" : False, # load trained weights for resuming training
     "buffer_pool_T" : 30,
     "buffer_pool_V" : 7,
-    "pre_norm" : True
+    "pre_norm" : True,
+    "learning_rate" : 1e-6
 }  
 
 for folder_name in ["json", "save_models", "results"]:
@@ -83,7 +84,7 @@ def train():
                                 out_ch=train_para["channel_Y"],
                                 start_ch=train_para["start_ch"],
                                 depth=train_para["depth"])
-    model.compile(optimizer=Adam(lr=1e-4),
+    model.compile(optimizer=Adam(lr=train_para["learning_rate"]),
                   loss=loss,
                   metrics=[mean_squared_error,mean_absolute_error])
     model.summary()
