@@ -418,7 +418,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
 
             filenameY = os.path.basename(currImgFileY)
             savenameY = os.path.join(self.normOptions.normYtempFolder, 
-                                     filenameY[:filenameY.find(".")]
+                                     filenameY[:filenameY.find(".")]+
                                      "_normY_"+self.normOptions.normYtype+".hdf5")
             fileY = h5py.File(savenameY, "w")
             fileY.create_dataset("data", data=tmpY.astype(np.double))
