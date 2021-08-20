@@ -411,7 +411,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                                      os.path.basename(currImgFileX)+
                                      "_normX_"+self.normOptions.normXtype+".hdf5")
             fileX = h5py.File(savenameX, "w")
-            fileX.create_dataset("data", data=tmpX)
+            fileX.create_dataset("data", data=tmpX.astype(np.double))
             fileX["header"]=Ximg.header
             fileX.close()
             print(savenameX, " saved.")
@@ -420,7 +420,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                                      os.path.basename(currImgFileY)+
                                      "_normY_"+self.normOptions.normYtype+".hdf5")
             fileY = h5py.File(savenameY, "w")
-            fileY.create_dataset("data", data=tmpY)
+            fileY.create_dataset("data", data=tmpY.astype(np.double))
             fileY["header"]=Yimg.header
             fileY.close()
             print(savenameY, " saved.")
