@@ -274,15 +274,10 @@ class SingleNiftiGenerator:
 
 # data generator for a paired set of nifti files
 class PairedNiftiGenerator(SingleNiftiGenerator):
-    inputFilesY = []
-    normYready = []
-    normYoffset = []
-    normYscale = []
-
-    normFileX = []
-    normFileY = []
-
-    buffer_pool = 1
+    # inputFilesY = []
+    # normYready = []
+    # normYoffset = []
+    # normYscale = []
 
     def initialize(self, inputX, inputY, augOptions=None, normOptions=None, buffer_pool=1):
 
@@ -366,6 +361,8 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         self.currSizeBufferPool = 0
         self.bufferPool = [None] * num_Xfiles
         self.memoryPool = [0] * num_Xfiles
+        self.normFileX = []
+        self.normFileY = []
 
         # Normalize data and save
         print("-"*50)
