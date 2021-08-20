@@ -514,6 +514,8 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 # time_load = time.time()
                 j = np.random.randint( 0, len(self.normFileX) )
                 print(j)
+                print(len(self.normFileX))
+                print(self.inputFilesX)
                 print(self.memoryPool)
 
                 # buffer pool
