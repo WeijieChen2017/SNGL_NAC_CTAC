@@ -40,6 +40,7 @@ train_para ={
     "load_weights" : False, # load trained weights for resuming training
     "buffer_pool_T" : 16,
     "buffer_pool_V" : 1,
+    "pre_norm" : True
 }  
 
 for folder_name in ["json", "save_models", "results"]:
@@ -117,6 +118,7 @@ def train():
     niftiGen_norm_opts.normXfunction = PET_norm
     niftiGen_norm_opts.normYtype = 'function'
     niftiGen_norm_opts.normYfunction = CT_norm
+    niftiGen_norm_opts.prenorm = train_para["pre_norm"]
     print(niftiGen_norm_opts)
 
     folderX = "./data_train/"+train_para["x_data_folder"]

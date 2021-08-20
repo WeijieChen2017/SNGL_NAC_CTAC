@@ -373,60 +373,9 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         print("-"*50)
 
         for j in range(len(self.inputFilesX)):
+
             currImgFileX = self.inputFilesX[j]
             currImgFileY = self.inputFilesY[j]
-
-            # load nifti header
-            module_logger.debug( 'reading files {}, {}'.format(currImgFileX,currImgFileY) )
-            Ximg = nib.load( currImgFileX )
-            Yimg = nib.load( currImgFileY )
-
-            Xdata = Ximg.get_fdata()
-            Ydata = Yimg.get_fdata()
-
-            # print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
-            # print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
-            # print("batch_Y mean std: ", np.mean(Ydata), np.std(Ydata))
-            # print("batch_Y min max: ", np.amin(Ydata), np.amax(Ydata))
-
-            XimgShape = Ximg.header.get_data_shape()
-            YimgShape = Yimg.header.get_data_shape()
-
-            if not XimgShape == YimgShape:
-                module_logger.warning('input data ({} and {}) is not the same size. this may lead to unexpected results or errors!'.format(currImgFileX,currImgFileY))
-
-            # handle input data normalization and sampling
-            if self.normOptions.normXtype == 'function'.lower():
-                # normalization is performed via a specified function
-                # get normalized data (and read whole volume)
-                Xdata = self.normOptions.normXfunction( Xdata )
-            else:
-                # type is none, auto, or fixed
-                # prepare normalization
-                if not self.normXready[j]:
-                    self.normXoffset[j] = np.mean( Xdata )
-                    self.normXscale[j] = np.std( Xdata )
-                    self.normXready[j] = True
-                Xdata = (Xdata - self.normXoffset[j]) / self.normXscale[j] 
-
-            if self.normOptions.normYtype == 'function'.lower():
-                # normalization is performed via a specified function
-                # get normalized data (and read whole volume)
-                Ydata = self.normOptions.normYfunction( Ydata )
-            else:
-                # type is none, auto, or fixed
-                # prepare normalization                    
-                if not self.normYready[j]:
-                    self.normYoffset[j] = np.mean( Ydata )
-                    self.normYscale[j] = np.std( Ydata )
-                    self.normYready[j] = True
-                Ydata = (Ydata - self.normYoffset[j]) / self.normYscale[j]
-
-            # print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
-            # print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
-            # print("batch_Y mean std: ", np.mean(Ydata), np.std(Ydata))
-            # print("batch_Y min max: ", np.amin(Ydata), np.amax(Ydata))
-
 
             filenameX = os.path.basename(currImgFileX)
             filenameY = os.path.basename(currImgFileY)
@@ -439,21 +388,73 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             self.normFileX.append(savenameX)
             self.normFileY.append(savenameY)
 
+            if not self.normOptions.prenorm:
+                
+                # load nifti header
+                module_logger.debug( 'reading files {}, {}'.format(currImgFileX,currImgFileY) )
+                Ximg = nib.load( currImgFileX )
+                Yimg = nib.load( currImgFileY )
 
-            fileX = h5py.File(savenameX, "w")
-            fileX.create_dataset("data", data=Xdata.astype(np.double))
-            for key, value in Ximg.header.items():
-                fileX[key] = value
-            fileX.close()
-            print(savenameX, " saved.")
+                Xdata = Ximg.get_fdata()
+                Ydata = Yimg.get_fdata()
+
+                # print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
+                # print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
+                # print("batch_Y mean std: ", np.mean(Ydata), np.std(Ydata))
+                # print("batch_Y min max: ", np.amin(Ydata), np.amax(Ydata))
+
+                XimgShape = Ximg.header.get_data_shape()
+                YimgShape = Yimg.header.get_data_shape()
+
+                if not XimgShape == YimgShape:
+                    module_logger.warning('input data ({} and {}) is not the same size. this may lead to unexpected results or errors!'.format(currImgFileX,currImgFileY))
+
+                # handle input data normalization and sampling
+                if self.normOptions.normXtype == 'function'.lower():
+                    # normalization is performed via a specified function
+                    # get normalized data (and read whole volume)
+                    Xdata = self.normOptions.normXfunction( Xdata )
+                else:
+                    # type is none, auto, or fixed
+                    # prepare normalization
+                    if not self.normXready[j]:
+                        self.normXoffset[j] = np.mean( Xdata )
+                        self.normXscale[j] = np.std( Xdata )
+                        self.normXready[j] = True
+                    Xdata = (Xdata - self.normXoffset[j]) / self.normXscale[j] 
+
+                if self.normOptions.normYtype == 'function'.lower():
+                    # normalization is performed via a specified function
+                    # get normalized data (and read whole volume)
+                    Ydata = self.normOptions.normYfunction( Ydata )
+                else:
+                    # type is none, auto, or fixed
+                    # prepare normalization                    
+                    if not self.normYready[j]:
+                        self.normYoffset[j] = np.mean( Ydata )
+                        self.normYscale[j] = np.std( Ydata )
+                        self.normYready[j] = True
+                    Ydata = (Ydata - self.normYoffset[j]) / self.normYscale[j]
+
+                # print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
+                # print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
+                # print("batch_Y mean std: ", np.mean(Ydata), np.std(Ydata))
+                # print("batch_Y min max: ", np.amin(Ydata), np.amax(Ydata))
+                
+                fileX = h5py.File(savenameX, "w")
+                fileX.create_dataset("data", data=Xdata.astype(np.double))
+                for key, value in Ximg.header.items():
+                    fileX[key] = value
+                fileX.close()
+                print(savenameX, " saved.")
 
 
-            fileY = h5py.File(savenameY, "w")
-            fileY.create_dataset("data", data=Ydata.astype(np.double))
-            for key, value in Yimg.header.items():
-                fileY[key] = value
-            fileY.close()
-            print(savenameY, " saved.")
+                fileY = h5py.File(savenameY, "w")
+                fileY.create_dataset("data", data=Ydata.astype(np.double))
+                for key, value in Yimg.header.items():
+                    fileY[key] = value
+                fileY.close()
+                print(savenameY, " saved.")
 
     def get_default_normOptions():
         normOptions = types.SimpleNamespace()
@@ -482,6 +483,8 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         normOptions.normYinterp = cv2.INTER_CUBIC
         normOptions.normYtempFolder = "./tmp/Y"
         normOptions.normYdeleteTemp = True
+
+        normOptions.prenorm = False
 
         return normOptions
         
