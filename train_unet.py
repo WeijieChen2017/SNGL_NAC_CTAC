@@ -38,8 +38,8 @@ train_para ={
     "steps_per_epoch" : 30*160, # should be enough to be equal to one whole pass through the dataset
     "initial_epoch" : 0, # for resuming training
     "load_weights" : False, # load trained weights for resuming training
-    "buffer_pool_T" : 16,
-    "buffer_pool_V" : 1,
+    "buffer_pool_T" : 30,
+    "buffer_pool_V" : 7,
     "pre_norm" : True
 }  
 
