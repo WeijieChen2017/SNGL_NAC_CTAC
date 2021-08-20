@@ -359,40 +359,6 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 os.makedirs(folder_name)
 
         # Normalize data and save
-        PairedNiftiGenerator.pre_process_norm()
-
-    def get_default_normOptions():
-        normOptions = types.SimpleNamespace()
-
-        # set normalization options
-        #  type can be 'none', 'auto', 'fixed', 'function'
-        # for none, no normalization is done
-        # for auto, a Z-score normalization is done on the Nifti volume to make mean=0, stdev=1
-        # for fixed, a specified offset and scaling factor is applied (data-offset)/scale
-        # for function, a python function is passed that takes the input data and returns a normalized version
-        normOptions.normXtype = 'none'
-        normOptions.normXoffset = 0
-        normOptions.normXscale = 1
-        # interp can be any of the opencv interpolation types: https://docs.opencv.org/3.4/da/d54/group__imgproc__transform.html
-        # cv2.INTER_NEAREST, cv2.INTER_LINEAR, cv2.INTER_CUBIC, cv2.INTER_AREA, cv2.LANCZOS4,
-        # cv2.INTER_LINEAR_EXACT, cv2.INTER_NEAREST_EXACT, cv2.INTER_MAX
-        normOptions.normXinterp = cv2.INTER_CUBIC
-        normOptions.normXfunction = None
-        # the temporary directory to store normalized hdf5 files 
-        normOptions.normXtempFolder = "./tmp/X"
-        normOptions.normXdeleteTemp = True
-
-        normOptions.normYtype = 'none'
-        normOptions.normYoffset = 0
-        normOptions.normYscale = 1
-        normOptions.normYinterp = cv2.INTER_CUBIC
-        normOptions.normYtempFolder = "./tmp/Y"
-        normOptions.normYdeleteTemp = True
-
-        return normOptions
-
-    def pre_process_norm(self):
-
         print("-"*50)
         print("Normalize data, and save as hdf5.")
         print("-"*50)
@@ -459,7 +425,35 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             fileY["header"]=Yimg.header
             fileY.close()
 
+    def get_default_normOptions():
+        normOptions = types.SimpleNamespace()
 
+        # set normalization options
+        #  type can be 'none', 'auto', 'fixed', 'function'
+        # for none, no normalization is done
+        # for auto, a Z-score normalization is done on the Nifti volume to make mean=0, stdev=1
+        # for fixed, a specified offset and scaling factor is applied (data-offset)/scale
+        # for function, a python function is passed that takes the input data and returns a normalized version
+        normOptions.normXtype = 'none'
+        normOptions.normXoffset = 0
+        normOptions.normXscale = 1
+        # interp can be any of the opencv interpolation types: https://docs.opencv.org/3.4/da/d54/group__imgproc__transform.html
+        # cv2.INTER_NEAREST, cv2.INTER_LINEAR, cv2.INTER_CUBIC, cv2.INTER_AREA, cv2.LANCZOS4,
+        # cv2.INTER_LINEAR_EXACT, cv2.INTER_NEAREST_EXACT, cv2.INTER_MAX
+        normOptions.normXinterp = cv2.INTER_CUBIC
+        normOptions.normXfunction = None
+        # the temporary directory to store normalized hdf5 files 
+        normOptions.normXtempFolder = "./tmp/X"
+        normOptions.normXdeleteTemp = True
+
+        normOptions.normYtype = 'none'
+        normOptions.normYoffset = 0
+        normOptions.normYscale = 1
+        normOptions.normYinterp = cv2.INTER_CUBIC
+        normOptions.normYtempFolder = "./tmp/Y"
+        normOptions.normYdeleteTemp = True
+
+        return normOptions
         
         # # sample data
         # XimgSlices = Ximg.slicer[:,:,z-Xslice_samples//2:z+Xslice_samples//2+1].get_fdata()
