@@ -388,7 +388,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                                      "_normY_"+self.normOptions.normYtype+".hdf5")
             self.normFileX.append(savenameX)
             self.normFileY.append(savenameY)
-            print(len(self.normFileX))
+            print(self.normFileX)
             if not self.normOptions.prenorm:
                 
                 # load nifti header
