@@ -515,7 +515,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 j = np.random.randint( 0, len(self.normFileX) )
                 print(j)
                 print(len(self.normFileX))
-                print(self.inputFilesX)
+                print(len(self.inputFilesX))
                 print(self.memoryPool)
 
                 # buffer pool
