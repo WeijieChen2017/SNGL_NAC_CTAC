@@ -352,9 +352,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             sys.exit(1)
 
         # create temporary folder
-        self.normXtempFolder = self.normOptions.normXtempFolder
-        self.normYtempFolder = self.normOptions.normYtempFolder
-        for folder_name in [self.normXtempFolder, self.normYtempFolder]:
+        for folder_name in [self.normOptions.normXtempFolder, self.normOptions.normYtempFolder]:
             if not os.path.exists(folder_name):
                 os.makedirs(folder_name)
 
@@ -408,7 +406,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 tmpY = (tmpY - self.normYoffset[j]) / self.normYscale[j]
 
             filenameX = os.path.basename(currImgFileX)
-            savenameX = os.path.join(self.normXtempFolder, 
+            savenameX = os.path.join(self.normOptions.normXtempFolder, 
                                      filenameX[:filenameX.find(".")]+
                                      "_normX_"+self.normOptions.normXtype+".hdf5")
             fileX = h5py.File(savenameX, "w")
@@ -419,7 +417,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             print(savenameX, " saved.")
 
             filenameY = os.path.basename(currImgFileY)
-            savenameY = os.path.join(self.normYtempFolder, 
+            savenameY = os.path.join(self.normOptions.normYtempFolder, 
                                      filenameY[:filenameY.find(".")]
                                      "_normY_"+self.normOptions.normYtype+".hdf5")
             fileY = h5py.File(savenameY, "w")
@@ -562,7 +560,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         if self.normXdeleteTemp:
             print("-"*50)
             print("Delete temporary X data")
-            cmd = "rm -rf " + self.normXtempFolder
+            cmd = "rm -rf " + self.normOptions.normXtempFolder
             print(cmd)
             os.system(cmd)
             print("-"*50)
@@ -570,7 +568,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         if self.normYdeleteTemp:
             print("-"*50)
             print("Delete temporary Y data")
-            cmd = "rm -rf " + self.normYtempFolder
+            cmd = "rm -rf " + self.normOptions.normYtempFolder
             print(cmd)
             os.system(cmd)
             print("-"*50)
