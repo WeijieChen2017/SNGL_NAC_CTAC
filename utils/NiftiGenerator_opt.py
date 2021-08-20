@@ -373,10 +373,13 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             Ximg = nib.load( currImgFileX )
             Yimg = nib.load( currImgFileY )
 
-            print("batch_X mean std: ", np.mean(Ximg), np.std(Ximg))
-            print("batch_X min max: ", np.amin(Ximg), np.amax(Ximg))
-            print("batch_Y mean std: ", np.mean(Yimg), np.std(Yimg))
-            print("batch_Y min max: ", np.amin(Yimg), np.amax(Yimg))
+            Xdata = Ximg.get_fdata()
+            Ydata = Yimg.get_fdata()
+
+            print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
+            print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
+            print("batch_Y mean std: ", np.mean(Ydata), np.std(Ydata))
+            print("batch_Y min max: ", np.amin(Ydata), np.amax(Ydata))
 
             XimgShape = Ximg.header.get_data_shape()
             YimgShape = Yimg.header.get_data_shape()
