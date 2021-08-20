@@ -376,10 +376,10 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             Xdata = Ximg.get_fdata()
             Ydata = Yimg.get_fdata()
 
-            print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
-            print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
-            print("batch_Y mean std: ", np.mean(Ydata), np.std(Ydata))
-            print("batch_Y min max: ", np.amin(Ydata), np.amax(Ydata))
+            # print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
+            # print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
+            # print("batch_Y mean std: ", np.mean(Ydata), np.std(Ydata))
+            # print("batch_Y min max: ", np.amin(Ydata), np.amax(Ydata))
 
             XimgShape = Ximg.header.get_data_shape()
             YimgShape = Yimg.header.get_data_shape()
@@ -414,10 +414,10 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                     self.normYready[j] = True
                 Ydata = (Ydata - self.normYoffset[j]) / self.normYscale[j]
 
-            print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
-            print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
-            print("batch_Y mean std: ", np.mean(Ydata), np.std(Ydata))
-            print("batch_Y min max: ", np.amin(Ydata), np.amax(Ydata))
+            # print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
+            # print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
+            # print("batch_Y mean std: ", np.mean(Ydata), np.std(Ydata))
+            # print("batch_Y min max: ", np.amin(Ydata), np.amax(Ydata))
 
 
             filenameX = os.path.basename(currImgFileX)
@@ -576,10 +576,10 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 batch_Y[batch_Y < 0] = 0
 
             print("-"*25)
-            print("batch_X mean std: ", np.mean(batch_X), np.std(batch_X))
-            print("batch_X min max: ", np.amin(batch_X), np.amax(batch_X))
-            print("batch_Y mean std: ", np.mean(batch_Y), np.std(batch_Y))
-            print("batch_Y min max: ", np.amin(batch_Y), np.amax(batch_Y))
+            # print("batch_X mean std: ", np.mean(batch_X), np.std(batch_X))
+            # print("batch_X min max: ", np.amin(batch_X), np.amax(batch_X))
+            # print("batch_Y mean std: ", np.mean(batch_Y), np.std(batch_Y))
+            # print("batch_Y min max: ", np.amin(batch_Y), np.amax(batch_Y))
             # print("Time load:", time_norm - time_load)
             # print("Time norm:", time_aug - time_norm)
             # print("Time aug:", time_output - time_aug)

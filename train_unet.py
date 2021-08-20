@@ -34,8 +34,8 @@ train_para ={
     "save_folder" : './save_models/',
     "jpgprogressfile_name" : 'progress_'+para_name,
     "batch_size" : 2, # should be smallish. 1-10
-    "num_epochs" : 3, # should train for at least 100-200 in total
-    "steps_per_epoch" : 30, # should be enough to be equal to one whole pass through the dataset
+    "num_epochs" : 20, # should train for at least 100-200 in total
+    "steps_per_epoch" : 30*160, # should be enough to be equal to one whole pass through the dataset
     "initial_epoch" : 0, # for resuming training
     "load_weights" : False, # load trained weights for resuming training
 }  
@@ -166,8 +166,8 @@ def train():
               callbacks=[history, model_checkpoint, display_progress] ) # , display_progress
 
     dataset_go_back(folder_list, sub_folder_list)
-    generatorT.delete_tmp_data()
-    generatorV.delete_tmp_data()
+    # generatorT.delete_tmp_data()
+    # generatorV.delete_tmp_data()
     os.system("mkdir "+train_para["para_name"])
     os.system("mv *"+train_para["para_name"]+"*.jpg "+train_para["para_name"])
     os.system("mv "+train_para["para_name"]+" ./jpeg/"+train_para["para_name"])
