@@ -386,12 +386,12 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             else:
                 # type is none, auto, or fixed
                 # prepare normalization
-                if not self.normXready[j]:
-                    tmpX = Ximg.get_fdata()
-                    self.normXoffset[j] = np.mean( tmpX )
-                    self.normXscale[j] = np.std( tmpX )
-                    self.normXready[j] = True
-                    tmpX = (tmpX - self.normXoffset[j]) / self.normXscale[j] 
+                # if not self.normXready[j]:
+                tmpX = Ximg.get_fdata()
+                self.normXoffset[j] = np.mean( tmpX )
+                self.normXscale[j] = np.std( tmpX )
+                self.normXready[j] = True
+                tmpX = (tmpX - self.normXoffset[j]) / self.normXscale[j] 
 
             if self.normOptions.normYtype == 'function'.lower():
                 # normalization is performed via a specified function
@@ -400,12 +400,12 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             else:
                 # type is none, auto, or fixed
                 # prepare normalization                    
-                if not self.normYready[j]:
-                    tmpY = Yimg.get_fdata()
-                    self.normYoffset[j] = np.mean( tmpY )
-                    self.normYscale[j] = np.std( tmpY )
-                    self.normYready[j] = True
-                    tmpY = (tmpY - self.normYoffset[j]) / self.normYscale[j]
+                # if not self.normYready[j]:
+                tmpY = Yimg.get_fdata()
+                self.normYoffset[j] = np.mean( tmpY )
+                self.normYscale[j] = np.std( tmpY )
+                self.normYready[j] = True
+                tmpY = (tmpY - self.normYoffset[j]) / self.normYscale[j]
 
             savenameX = os.path.join(self.normXtempFolder, 
                                      os.path.basename(currImgFileX)+
