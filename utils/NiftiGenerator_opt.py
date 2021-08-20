@@ -391,7 +391,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
 
         return normOptions
 
-    def pre_process_norm():
+    def pre_process_norm(self):
 
         print("-"*50)
         print("Normalize data, and save as hdf5.")
