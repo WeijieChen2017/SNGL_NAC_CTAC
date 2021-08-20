@@ -279,6 +279,9 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
     normYoffset = []
     normYscale = []
 
+    self.normFileX = []
+    self.normFileY = []
+
     def initialize(self, inputX, inputY, augOptions=None, normOptions=None):
 
         # if input is a list, let's just use that
@@ -410,6 +413,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                                      filenameX[:filenameX.find(".")]+
                                      "_normX_"+self.normOptions.normXtype+".hdf5")
             fileX = h5py.File(savenameX, "w")
+            self.normFileX.append(savenameX)
             fileX.create_dataset("data", data=tmpX.astype(np.double))
             for key, value in Ximg.header.items():
                 fileX[key] = value
@@ -421,6 +425,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                                      filenameY[:filenameY.find(".")]+
                                      "_normY_"+self.normOptions.normYtype+".hdf5")
             fileY = h5py.File(savenameY, "w")
+            self.normFileY.append(savenameY)
             fileY.create_dataset("data", data=tmpY.astype(np.double))
             for key, value in Yimg.header.items():
                 fileY[key] = value
@@ -481,17 +486,24 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             for i in range(batch_size):
                 # get a random subject
                 # time_load = time.time()
-                j = np.random.randint( 0, len(self.inputFilesX) )
-                currImgFileX = self.inputFilesX[j]
-                currImgFileY = self.inputFilesY[j]
+                j = np.random.randint( 0, len(self.normFileX) )
+                currImgFileX = self.normFileX[j]
+                currImgFileY = self.normFileX[j]
 
                 # load nifti header
                 module_logger.debug( 'reading files {}, {}'.format(currImgFileX,currImgFileY) )
-                Ximg = nib.load( currImgFileX )
-                Yimg = nib.load( currImgFileY )
 
-                XimgShape = Ximg.header.get_data_shape()
-                YimgShape = Yimg.header.get_data_shape()
+                currNormFileX = h5py.File(currImgFileX, 'r')
+                currNormFileY = h5py.File(currImgFileY, 'r')
+
+                currNormDataX = currNormFileX["data"]
+                currNormDataY = currNormFileY["data"]
+
+                # Ximg = nib.load( currImgFileX )
+                # Yimg = nib.load( currImgFileY )
+
+                # XimgShape = Ximg.header.get_data_shape()
+                # YimgShape = Yimg.header.get_data_shape()
 
                 if not XimgShape == YimgShape:
                     module_logger.warning('input data ({} and {}) is not the same size. this may lead to unexpected results or errors!'.format(currImgFileX,currImgFileY))
@@ -514,6 +526,8 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 module_logger.debug( 'sampling range is {}'.format(z) )
 
                 # time_norm = time.time()
+                XimgSlices = tmpX[:,:,z-Xslice_samples//2:z+Xslice_samples//2+1]
+                YimgSlices = tmpY[:,:,z-Yslice_samples//2:z+Yslice_samples//2+1]
                 
                 # resize to fixed size for model (note img is resized with CUBIC)
                 XimgSlices = cv2.resize( XimgSlices, dsize=(img_size[1],img_size[0]), interpolation = self.normOptions.normXinterp)
