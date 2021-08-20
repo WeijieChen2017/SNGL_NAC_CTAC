@@ -158,6 +158,8 @@ def train():
               callbacks=[history, model_checkpoint, display_progress] ) # , display_progress
 
     dataset_go_back(folder_list, sub_folder_list)
+    generatorT.delete_tmp_data()
+    generatorV.delete_tmp_data()
     os.system("mkdir "+train_para["para_name"])
     os.system("mv *"+train_para["para_name"]+"*.jpg "+train_para["para_name"])
     os.system("mv "+train_para["para_name"]+" ./jpeg/"+train_para["para_name"])
