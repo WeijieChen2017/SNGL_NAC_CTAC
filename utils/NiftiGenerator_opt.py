@@ -440,7 +440,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 # print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
                 # print("batch_Y mean std: ", np.mean(Ydata), np.std(Ydata))
                 # print("batch_Y min max: ", np.amin(Ydata), np.amax(Ydata))
-                
+
                 fileX = h5py.File(savenameX, "w")
                 fileX.create_dataset("data", data=Xdata.astype(np.double))
                 for key, value in Ximg.header.items():
@@ -513,6 +513,8 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 # get a random subject
                 # time_load = time.time()
                 j = np.random.randint( 0, len(self.normFileX) )
+                print(j)
+                print(self.memoryPool)
 
                 # buffer pool
                 if self.memoryPool[j] > 0:
