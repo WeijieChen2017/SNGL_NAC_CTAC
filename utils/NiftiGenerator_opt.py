@@ -352,6 +352,8 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             sys.exit(1)
 
         # create temporary folder
+        self.normXtempFolder = self.normOptions.normXtempFolder
+        self.normYtempFolder = self.normOptions.normYtempFolder
         for folder_name in [self.normXtempFolder, self.normYtempFolder]:
             if not os.path.exists(folder_name):
                 os.makedirs(folder_name)
