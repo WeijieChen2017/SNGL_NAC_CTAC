@@ -55,6 +55,12 @@ def CT_norm(data):
     data = (data + 1000) / 4000
     return data
 
+def PET_norm(data):
+    data[data<0] = 0
+    data[data>12000] = 12000
+    data = data / 12000
+    return data
+
 def train():
 
     print(train_para)
@@ -99,12 +105,14 @@ def train():
     niftiGen_augment_opts.translations = 0
     print(niftiGen_augment_opts)
     niftiGen_norm_opts = NiftiGenerator.PairedNiftiGenerator.get_default_normOptions()
-    niftiGen_norm_opts.normXtype = 'fixed'
-    niftiGen_norm_opts.normXoffset = 0
-    niftiGen_norm_opts.normXscale = 6000
+    # niftiGen_norm_opts.normXtype = 'fixed'
+    # niftiGen_norm_opts.normXoffset = 0
+    # niftiGen_norm_opts.normXscale = 6000
     # niftiGen_norm_opts.normYtype = 'fixed'
     # niftiGen_norm_opts.normYoffset = -1000
     # niftiGen_norm_opts.normYscale = 4000
+    niftiGen_norm_opts.normXtype = 'function'
+    niftiGen_norm_opts.normXfunction = PET_norm
     niftiGen_norm_opts.normYtype = 'function'
     niftiGen_norm_opts.normYfunction = CT_norm
     print(niftiGen_norm_opts)
