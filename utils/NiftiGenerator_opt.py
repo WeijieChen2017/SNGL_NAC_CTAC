@@ -548,7 +548,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
 
                     # save to the buffer pool
                     self.bufferPool[j] = [currNormDataX, currNormDataY, XimgShape, YimgShape]
-                    self.memoryPool[j] = sys.getsizeof(bufferPool[j])
+                    self.memoryPool[j] = sys.getsizeof(self.bufferPool[j])
                     self.currSizeBufferPool += 1
 
                 # Ximg = nib.load( currImgFileX )
