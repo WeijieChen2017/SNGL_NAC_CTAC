@@ -279,8 +279,8 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
     normYoffset = []
     normYscale = []
 
-    self.normFileX = []
-    self.normFileY = []
+    normFileX = []
+    normFileY = []
 
     def initialize(self, inputX, inputY, augOptions=None, normOptions=None):
 
