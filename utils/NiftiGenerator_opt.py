@@ -528,7 +528,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
 
                     # load new case
                     currImgFileX = self.normFileX[j]
-                    currImgFileY = self.normFileX[j]
+                    currImgFileY = self.normFileY[j]
 
                     # load nifti header
                     module_logger.debug( 'reading files {}, {}'.format(currImgFileX,currImgFileY) )

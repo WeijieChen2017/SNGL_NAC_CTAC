@@ -88,7 +88,7 @@ def train():
     model.compile(optimizer=Adam(lr=train_para["learning_rate"]),
                   loss=loss,
                   metrics=[mean_squared_error,mean_absolute_error])
-    model.summary()
+    # model.summary()
 
     # Save the model architecture
     with open(train_para["save_folder"]+train_para["model_name"], 'w') as f:
@@ -168,7 +168,7 @@ def train():
               initial_epoch=train_para["initial_epoch"],
               validation_data=generatorV,
               validation_steps=100,
-              callbacks=[history, model_checkpoint, display_progress] ) # , display_progress
+              callbacks=[history, model_checkpoint] ) # , display_progress
 
     dataset_go_back(folder_list, sub_folder_list)
     # generatorT.delete_tmp_data()
