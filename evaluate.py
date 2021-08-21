@@ -83,7 +83,7 @@ def eval():
                 testX_file = nibabel.load(testX_path)
                 testX_data = testX_file.get_fdata()
                 testX_max = np.amax(testX_data)
-                testX_data = testX_data / 6000
+                testX_data = testX_data / 12000
                 # inputX = np.transpose(testX_norm, (2,0,1))
 
                 # niftiGenE = NiftiGenerator.SingleNiftiGenerator()
