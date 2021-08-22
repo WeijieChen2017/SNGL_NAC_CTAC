@@ -89,6 +89,7 @@ def eval():
 
             testX_list = glob.glob("./data_test/"+test_para["data_folder"]+"/*_NPR.nii")
             testX_list += glob.glob("./data_test/"+test_para["data_folder"]+"/*_NPR.nii.gz")
+            print("./data_test/"+test_para["data_folder"]+"/*_NPR.nii.gz")
             testX_list.sort()
             for testX_path in testX_list:
                 print("testX: ", testX_path)
@@ -167,11 +168,11 @@ def eval():
         with open("./json/"+"/test_para_"+test_para["test_para_name"]+".json", "w") as outfile:  
             json.dump(test_para, outfile)
         
-        progress_folder = "./results/"+test_para["test_para_name"]+"/jpeg/"
-        if not os.path.exists(progress_folder):
-            os.makedirs(progress_folder)
-        move_progress_cmd = "cp ./jpeg/"+test_para["train_para_name"]+"/*.jpg "+progress_folder
-        os.system(move_progress_cmd)
+        # progress_folder = "./results/"+test_para["test_para_name"]+"/jpeg/"
+        # if not os.path.exists(progress_folder):
+        #     os.makedirs(progress_folder)
+        # move_progress_cmd = "cp ./jpeg/"+test_para["train_para_name"]+"/*.jpg "+progress_folder
+        # os.system(move_progress_cmd)
 
 def create_index(dataA, n_slice, zeroPadding=False):
     h, w, z = dataA.shape
