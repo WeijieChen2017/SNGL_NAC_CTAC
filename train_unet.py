@@ -13,9 +13,9 @@ from tensorflow.keras.losses import mean_absolute_error, mean_squared_error
 from tensorflow.keras.optimizers import Adam
 
 from models import Unet
-from utils import NiftiGenerator_opt as NiftiGenerator
+from utils import NiftiGenerator_memory as NiftiGenerator
 
-para_name = "exper04"
+para_name = "exper05"
 # Data to be written  
 train_para ={  
     "para_name" : para_name,

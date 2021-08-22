@@ -364,11 +364,6 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         self.normFileX = []
         self.normFileY = []
 
-        self.dataMemoryX = [None] * num_Xfiles
-        self.dataMemoryY = [None] * num_Xfiles
-        self.start_z = 364
-        self.end_z = 464
-
         # Normalize data and save
         print("-"*50)
         print("Normalize data, and save as hdf5.")
@@ -439,28 +434,25 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                         self.normYready[j] = True
                     Ydata = (Ydata - self.normYoffset[j]) / self.normYscale[j]
 
-                self.dataMemoryX[j] = Xdata
-                self.dataMemoryY[j] = Ydata
-
                 # print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
                 # print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
                 # print("batch_Y mean std: ", np.mean(Ydata), np.std(Ydata))
                 # print("batch_Y min max: ", np.amin(Ydata), np.amax(Ydata))
 
-                # fileX = h5py.File(savenameX, "w")
-                # fileX.create_dataset("data", data=Xdata.astype(np.double))
-                # for key, value in Ximg.header.items():
-                #     fileX[key] = value
-                # fileX.close()
-                # print(savenameX, " saved.")
+                fileX = h5py.File(savenameX, "w")
+                fileX.create_dataset("data", data=Xdata.astype(np.double))
+                for key, value in Ximg.header.items():
+                    fileX[key] = value
+                fileX.close()
+                print(savenameX, " saved.")
 
 
-                # fileY = h5py.File(savenameY, "w")
-                # fileY.create_dataset("data", data=Ydata.astype(np.double))
-                # for key, value in Yimg.header.items():
-                #     fileY[key] = value
-                # fileY.close()
-                # print(savenameY, " saved.")
+                fileY = h5py.File(savenameY, "w")
+                fileY.create_dataset("data", data=Ydata.astype(np.double))
+                for key, value in Yimg.header.items():
+                    fileY[key] = value
+                fileY.close()
+                print(savenameY, " saved.")
 
     def get_default_normOptions():
         normOptions = types.SimpleNamespace()
@@ -520,52 +512,46 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 # time_load = time.time()
                 j = np.random.randint( 0, len(self.normFileX) )
 
-                # # buffer pool
-                # if self.memoryPool[j] > 0:
-                #     # this case has been loaded
-                #     currNormDataX = self.bufferPool[j][0]
-                #     currNormDataY = self.bufferPool[j][1]
-                #     XimgShape = self.bufferPool[j][2]
-                #     YimgShape = self.bufferPool[j][3]
-                # else:
-                #     if self.currSizeBufferPool == self.maxSizeBufferPool:
-                #         # kick out the largest case
-                #         largest_idx = self.memoryPool.index(max(self.memoryPool))
-                #         self.bufferPool[largest_idx] = None
-                #         self.memoryPool[largest_idx] = 0
+                # buffer pool
+                if self.memoryPool[j] > 0:
+                    # this case has been loaded
+                    currNormDataX = self.bufferPool[j][0]
+                    currNormDataY = self.bufferPool[j][1]
+                    XimgShape = self.bufferPool[j][2]
+                    YimgShape = self.bufferPool[j][3]
+                else:
+                    if self.currSizeBufferPool == self.maxSizeBufferPool:
+                        # kick out the largest case
+                        largest_idx = self.memoryPool.index(max(self.memoryPool))
+                        self.bufferPool[largest_idx] = None
+                        self.memoryPool[largest_idx] = 0
 
-                #     # load new case
-                #     currImgFileX = self.normFileX[j]
-                #     currImgFileY = self.normFileY[j]
+                    # load new case
+                    currImgFileX = self.normFileX[j]
+                    currImgFileY = self.normFileY[j]
 
-                #     # load nifti header
-                #     module_logger.debug( 'reading files {}, {}'.format(currImgFileX,currImgFileY) )
+                    # load nifti header
+                    module_logger.debug( 'reading files {}, {}'.format(currImgFileX,currImgFileY) )
 
-                #     currNormFileX = h5py.File(currImgFileX, 'r')
-                #     currNormFileY = h5py.File(currImgFileY, 'r')
+                    currNormFileX = h5py.File(currImgFileX, 'r')
+                    currNormFileY = h5py.File(currImgFileY, 'r')
 
-                #     currNormDataX = currNormFileX["data"]
-                #     currNormDataY = currNormFileY["data"]
+                    currNormDataX = currNormFileX["data"]
+                    currNormDataY = currNormFileY["data"]
 
-                #     XimgShape = currNormDataX.shape
-                #     YimgShape = currNormDataY.shape
+                    XimgShape = currNormDataX.shape
+                    YimgShape = currNormDataY.shape
 
-                #     # save to the buffer pool
-                #     self.bufferPool[j] = [currNormDataX, currNormDataY, XimgShape, YimgShape]
-                #     self.memoryPool[j] = sys.getsizeof(self.bufferPool[j])
-                #     self.currSizeBufferPool += 1
+                    # save to the buffer pool
+                    self.bufferPool[j] = [currNormDataX, currNormDataY, XimgShape, YimgShape]
+                    self.memoryPool[j] = sys.getsizeof(self.bufferPool[j])
+                    self.currSizeBufferPool += 1
 
                 # Ximg = nib.load( currImgFileX )
                 # Yimg = nib.load( currImgFileY )
 
                 # XimgShape = Ximg.header.get_data_shape()
                 # YimgShape = Yimg.header.get_data_shape()
-
-                currNormDataX = dataMemoryX[j]
-                currNormDataY = dataMemoryY[j]
-                XimgShape = currNormDataX.shape
-                YimgShape = currNormDataY.shape
-
 
                 max_slice = max(Xslice_samples, Yslice_samples)
                 imgshape2 = min(XimgShape[2], YimgShape[2])
