@@ -125,7 +125,7 @@ def eval():
                     print("outputY_slice shape: ", outputY_slice.shape)
                     print("outputY_slice mean:", np.mean(outputY_slice))
                     print("outputY_slice std:", np.std(outputY_slice))
-                    outputY[:, :, idx] = np.squeeze(np.transpose(outputY_slice, (1,2,0,3))[:, :, :, test_para["channel_Y"] // 2]) * testX_max
+                    outputY[:, :, idx] = np.squeeze(np.transpose(outputY_slice, (1,2,0,3))[:, :, :, test_para["channel_Y"] // 2])
                     # if idx == 32:
                     #     np.save(testX_name+"_inputX.npy", inputX_slice)
                     #     np.save(testX_name+"_outputY.npy", outputY_slice)
