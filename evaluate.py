@@ -87,8 +87,8 @@ def eval():
             # print(niftiGen_norm_opts)
 
 
-            testX_list = glob.glob("./data_test/"+test_para["data_folder"]+"/*_NPR.nii")
-            testX_list += glob.glob("./data_test/"+test_para["data_folder"]+"/*_NPR.nii.gz")
+            testX_list = glob.glob("./data_test/"+test_para["data_folder"]+"/NPR_*.nii")
+            testX_list += glob.glob("./data_test/"+test_para["data_folder"]+"/NPR_*.nii.gz")
             print("./data_test/"+test_para["data_folder"]+"/*_NPR.nii.gz")
             testX_list.sort()
             for testX_path in testX_list:
