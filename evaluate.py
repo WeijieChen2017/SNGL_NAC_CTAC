@@ -17,10 +17,22 @@ from keras import backend as K
 from utils import dataUtilities as du
 from utils import NiftiGenerator
 
+def CT_norm(data):
+    data[data<-1000] = -1000
+    data[data>3000] = 3000
+    data = (data + 1000) / 4000
+    return data
+
+def PET_norm(data):
+    data[data<0] = 0
+    data[data>12000] = 12000
+    data = data / 12000
+    return data
+
 def eval():
-    train_para_name_hub = ["exper03"]
+    train_para_name_hub = ["exper04"]
     test_para_name_prefix = "exper"
-    test_count = 3
+    test_count = 4
     test_count -= 1 # for iteration begining, it add by 1 in the first iteration.
 
     for train_para_name in train_para_name_hub:
@@ -75,15 +87,19 @@ def eval():
             # print(niftiGen_norm_opts)
 
 
-            testX_list = glob.glob("./data_test/"+test_para["data_folder"]+"/*.nii")+glob.glob("./data_test/"+test_para["data_folder"]+"/*.nii.gz")
+            testX_list = glob.glob("./data_test/"+test_para["data_folder"]+"/*_NPR.nii")
+            testX_list += glob.glob("./data_test/"+test_para["data_folder"]+"/*_NPR.nii.gz")
             testX_list.sort()
             for testX_path in testX_list:
                 print("testX: ", testX_path)
+                gt_path = testX_path.replace("NPR", "CT")
+                gt_data = nibabel.load(gt_path).get_fdata()
+                gt_data = CT_norm(gt_data)
+
                 testX_name = os.path.basename(testX_path)
                 testX_file = nibabel.load(testX_path)
                 testX_data = testX_file.get_fdata()
-                testX_max = np.amax(testX_data)
-                testX_data = testX_data / 12000
+                testX_data = PET_norm(testX_data)
                 # inputX = np.transpose(testX_norm, (2,0,1))
 
                 # niftiGenE = NiftiGenerator.SingleNiftiGenerator()
@@ -121,10 +137,10 @@ def eval():
                 print("outputY shape: ", outputY.shape)
                 predY_data = outputY
                 # predY_data[predY_data < 0] = 0
-                testX_sum = np.sum(testX_data)
-                predY_sum = np.sum(predY_data)
-                predY_data = predY_data / predY_sum * testX_sum
-                diffY_data = np.subtract(testX_data, predY_data)
+                # testX_sum = np.sum(testX_data)
+                # predY_sum = np.sum(predY_data)
+                # predY_data = predY_data / predY_sum * testX_sum
+                diffY_data = np.subtract(gt_data, predY_data)
 
                 predY_folder = "./results/"+test_para["test_para_name"]+"/predY/"
                 diffY_folder = "./results/"+test_para["test_para_name"]+"/diffY/"
