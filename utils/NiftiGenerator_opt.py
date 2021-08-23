@@ -513,7 +513,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         # # do normalization
         
 
-    def generate_slice(self):
+    def generate_slice(self, Xslice_samples=1, Yslice_samples=1, batch_size=16):
 
         j = np.random.randint( 0, len(self.normFileX) )
         currNormFileX = h5py.File(self.normFileX[j], 'r')
@@ -578,9 +578,9 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             
             dataLoaderResults = []
             dataLoaderPool = Pool()
-
+            args = (Xslice_samples, Yslice_samples, batch_size)
             for i in range(batch_size):
-                dataLoaderResults.append(dataLoaderPool.apply_async(self.generate_slice))
+                dataLoaderResults.append(dataLoaderPool.apply_async(self.generate_slice), args=args)
 
             dataLoaderPool.close()
             dataLoaderPool.join()
