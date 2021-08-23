@@ -447,10 +447,10 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 # self.dataMemoryY[j] = Ydata
                 # print(self.dataMemoryX[j].shape, self.dataMemoryY[j].shape)
 
-                print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
-                print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
-                print("batch_Y mean std: ", np.mean(Ydata), np.std(Ydata))
-                print("batch_Y min max: ", np.amin(Ydata), np.amax(Ydata))
+                # print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
+                # print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
+                # print("batch_Y mean std: ", np.mean(Ydata), np.std(Ydata))
+                # print("batch_Y min max: ", np.amin(Ydata), np.amax(Ydata))
 
                 fileX = h5py.File(savenameX, "w")
                 fileX.create_dataset("data", data=Xdata.astype(np.double))
@@ -495,7 +495,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         normOptions.normYtempFolder = "./tmp/Y"
         normOptions.normYdeleteTemp = True
 
-        normOptions.needNorm = True
+        normOptions.needNorm = False
 
         return normOptions
         
@@ -516,8 +516,10 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
     def generate_slice(self):
 
         j = np.random.randint( 0, len(self.normFileX) )
-        currNormDataX = nib.load(self.normFileX[j]).get_fdata()
-        currNormDataY = nib.load(self.normFileY[j]).get_fdata()
+        currNormFileX = h5py.File(self.normFileX[j], 'r')
+        currNormFileY = h5py.File(self.normFileY[j], 'r')
+        currNormDataX = currNormFileX["data"]
+        currNormDataY = currNormFileY["data"]
         XimgShape = currNormDataX.shape
         YimgShape = currNormDataY.shape
 
