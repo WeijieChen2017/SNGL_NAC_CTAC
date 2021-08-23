@@ -9,6 +9,7 @@ import numpy as np
 import nibabel as nib
 
 from glob import glob
+from threading import Thread
 from scipy.ndimage import affine_transform
 
 module_logger = logging.getLogger(__name__)
@@ -17,6 +18,19 @@ module_logger_formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname
 module_logger_handler.setFormatter(module_logger_formatter)
 module_logger.addHandler(module_logger_handler)
 module_logger.setLevel(logging.INFO)
+
+class MyThread(Thread):
+    def __init__(self, func, args):
+        Thread.__init__(self)
+        self.func = func
+        self.args = args
+        self.result = None
+
+    def run(self):
+        self.result = self.func(*self.args)
+
+    def getResult(self):
+        return self.result
 
 # data generator for a single set of nifti files
 class SingleNiftiGenerator:
@@ -508,7 +522,83 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         # # do normalization
         
 
+    def generate_slice(self)
+
+        j = np.random.randint( 0, len(self.normFileX) )
+        currNormDataX = self.dataMemoryX[j]
+        currNormDataY = self.dataMemoryY[j]
+        XimgShape = currNormDataX.shape
+        YimgShape = currNormDataY.shape
+
+        max_slice = max(Xslice_samples, Yslice_samples)
+        imgshape2 = min(XimgShape[2], YimgShape[2])
+        if max_slice==1:
+            z = np.random.randint( 0, imgshape2-1 )
+        elif max_slice==3:
+            z = np.random.randint( 1, imgshape2-2 )
+        elif max_slice==5:
+            z = np.random.randint( 2, imgshape2-3 )
+        elif max_slice==7:
+            z = np.random.randint( 3, imgshape2-4 )
+        elif max_slice==9:
+            z = np.random.randint( 4, imgshape2-5 )
+        else:
+            module_logger.error('Fatal Error: Number of slice samples must be 1, 3, 5, 7, or 9')
+            sys.exit(1) 
+        module_logger.debug( 'sampling range is {}'.format(z) )
+
+        # time_norm = time.time()
+        XimgSlices = currNormDataX[:,:,z-Xslice_samples//2:z+Xslice_samples//2+1]
+        YimgSlices = currNormDataY[:,:,z-Yslice_samples//2:z+Yslice_samples//2+1]
+        
+        # resize to fixed size for model (note img is resized with CUBIC)
+        XimgSlices = cv2.resize( XimgSlices, dsize=(img_size[1],img_size[0]), interpolation = self.normOptions.normXinterp)
+        YimgSlices = cv2.resize( YimgSlices, dsize=(img_size[1],img_size[0]), interpolation = self.normOptions.normYinterp)
+        # print("YimgSlices stage 2: ", np.amin(YimgSlices))
+
+        # ensure 3D matrix if batch size is equal to 1
+        if XimgSlices.ndim == 2:
+            XimgSlices = XimgSlices[...,np.newaxis]
+        if YimgSlices.ndim == 2:
+            YimgSlices = YimgSlices[...,np.newaxis]
+
+        # time_aug = time.time()
+        # augmentation here
+        M = self.get_augment_transform()
+        XimgSlices = self.do_augment( XimgSlices, M )
+        YimgSlices = self.do_augment( YimgSlices, M )
+        # print("YimgSlices stage 3: ", np.amin(YimgSlices))
+
+        # if an additional augmentation function is supplied, apply it here
+        if self.augOptions.additionalFunction:
+            XimgSlices = self.augOptions.additionalFunction( XimgSlices )
+            YimgSlices = self.augOptions.additionalFunction( YimgSlices )
+
+        return [XimgSlices, YimgSlices]
+
     def generate(self, img_size=(256,256), Xslice_samples=1, Yslice_samples=1, batch_size=16):
+
+        while True:
+            # create empty variables for this batch
+            batch_X = np.zeros( [batch_size,img_size[0],img_size[1],Xslice_samples] )
+            batch_Y = np.zeros( [batch_size,img_size[0],img_size[1],Yslice_samples] )
+            threadPool = [None] * batch_size
+
+            for i in range(batch_size):
+
+                threadPool[i] = MyThread(target=self.generate_slice())
+                threadPool[i].start()
+                threadPool[i].join()
+
+            for i in range(batch_size):
+                # put into data array for batch for this batch of samples
+                batch_X[i,:,:,:] = threadPool[i].getResult()[0]
+                batch_Y[i,:,:,:] = threadPool[i].getResult()[1]
+                # time_output = time.time()
+
+            yield (batch_X , batch_Y)
+
+    def generate_old(self, img_size=(256,256), Xslice_samples=1, Yslice_samples=1, batch_size=16):
 
         while True:
             # create empty variables for this batch
@@ -561,8 +651,8 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 # XimgShape = Ximg.header.get_data_shape()
                 # YimgShape = Yimg.header.get_data_shape()
 
-                currNormDataX = dataMemoryX[j]
-                currNormDataY = dataMemoryY[j]
+                currNormDataX = self.dataMemoryX[j]
+                currNormDataY = self.dataMemoryY[j]
                 XimgShape = currNormDataX.shape
                 YimgShape = currNormDataY.shape
 
