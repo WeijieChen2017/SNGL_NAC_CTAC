@@ -367,8 +367,8 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
 
         self.dataMemoryX = [None] * num_Xfiles
         self.dataMemoryY = [None] * num_Xfiles
-        self.start_z = 364
-        self.end_z = 464
+        self.start_z = 0.45
+        self.end_z = 0.75
 
         # Normalize data and save
         print("-"*50)
@@ -398,8 +398,12 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                 Ximg = nib.load( currImgFileX )
                 Yimg = nib.load( currImgFileY )
 
-                Xdata = Ximg.get_fdata()[:, :, self.start_z:self.end_z]
-                Ydata = Yimg.get_fdata()[:, :, self.start_z:self.end_z]
+                Xdata = Ximg.get_fdata()
+                Ydata = Yimg.get_fdata()
+                len_zX = Xdata.shape[2]
+                len_zY = Ydata.shape[2]
+                Xdata = Xdata[:, :, round(self.start_z*len_zX):round(self.end_z*len_zX)]
+                Ydata = Ydata[:, :, round(self.start_z*len_zY):round(self.end_z*len_zY)]
 
                 # print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
                 # print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
@@ -441,7 +445,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
 
                 self.dataMemoryX[j] = Xdata
                 self.dataMemoryY[j] = Ydata
-                print(self.dataMemoryX[j].shape, self.dataMemoryY[j].shape)
+                # print(self.dataMemoryX[j].shape, self.dataMemoryY[j].shape)
 
                 # print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
                 # print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
@@ -512,7 +516,6 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
     def generate_slice(self):
 
         j = np.random.randint( 0, len(self.normFileX) )
-        print(j)
         currNormDataX = self.dataMemoryX[j]
         currNormDataY = self.dataMemoryY[j]
         XimgShape = currNormDataX.shape
@@ -562,7 +565,6 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             XimgSlices = self.augOptions.additionalFunction( XimgSlices )
             YimgSlices = self.augOptions.additionalFunction( YimgSlices )
 
-        print(XimgSlices.shape, YimgSlices.shape)
         return [XimgSlices, YimgSlices]
 
     def generate(self, img_size=(256,256), Xslice_samples=1, Yslice_samples=1, batch_size=16):
@@ -582,7 +584,6 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             dataLoaderPool.join()
 
             for i in range(batch_size):
-                print(dataLoaderResults[i].get())
                 # put into data array for batch for this batch of samples
                 batch_X[i,:,:,:] = dataLoaderResults[i].get()[0]
                 batch_Y[i,:,:,:] = dataLoaderResults[i].get()[1]
