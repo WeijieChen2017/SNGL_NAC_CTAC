@@ -559,7 +559,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             XimgSlices = self.augOptions.additionalFunction( XimgSlices )
             YimgSlices = self.augOptions.additionalFunction( YimgSlices )
 
-        # print(XimgSlices.shape, YimgSlices.shape)
+        print(XimgSlices.shape, YimgSlices.shape)
         return [XimgSlices, YimgSlices]
 
     def generate(self, img_size=(256,256), Xslice_samples=1, Yslice_samples=1, batch_size=16):
@@ -579,7 +579,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             dataLoaderPool.join()
 
             for i in range(batch_size):
-                # print(dataLoaderResults[i].get())
+                print(dataLoaderResults[i].get())
                 # put into data array for batch for this batch of samples
                 batch_X[i,:,:,:] = dataLoaderResults[i].get()[0]
                 batch_Y[i,:,:,:] = dataLoaderResults[i].get()[1]
