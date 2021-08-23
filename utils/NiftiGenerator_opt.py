@@ -9,7 +9,7 @@ import numpy as np
 import nibabel as nib
 
 from glob import glob
-from threading import Thread
+from multiprocessing import Pool
 from scipy.ndimage import affine_transform
 
 module_logger = logging.getLogger(__name__)
@@ -18,19 +18,6 @@ module_logger_formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname
 module_logger_handler.setFormatter(module_logger_formatter)
 module_logger.addHandler(module_logger_handler)
 module_logger.setLevel(logging.INFO)
-
-class MyThread(Thread):
-    def __init__(self, func, args):
-        Thread.__init__(self)
-        self.func = func
-        self.args = args
-        self.result = None
-
-    def run(self):
-        self.result = self.func(*self.args)
-
-    def getResult(self):
-        return self.result
 
 # data generator for a single set of nifti files
 class SingleNiftiGenerator:
@@ -582,18 +569,20 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             # create empty variables for this batch
             batch_X = np.zeros( [batch_size,img_size[0],img_size[1],Xslice_samples] )
             batch_Y = np.zeros( [batch_size,img_size[0],img_size[1],Yslice_samples] )
-            threadPool = [None] * batch_size
+            
+            dataLoaderResults = []
+            dataLoaderPool = Pool()
 
             for i in range(batch_size):
+                dataLoaderResults.append(dataLoaderPool.apply_async(self.generate_slice, args=(i,)))
 
-                threadPool[i] = MyThread(target=self.generate_slice())
-                threadPool[i].start()
-                threadPool[i].join()
+            dataLoaderPool.close()
+            dataLoaderPool.join()
 
             for i in range(batch_size):
                 # put into data array for batch for this batch of samples
-                batch_X[i,:,:,:] = threadPool[i].getResult()[0]
-                batch_Y[i,:,:,:] = threadPool[i].getResult()[1]
+                batch_X[i,:,:,:] = dataLoaderResults[i].get()[0]
+                batch_Y[i,:,:,:] = dataLoaderResults[i].get()[1]
                 # time_output = time.time()
 
             yield (batch_X , batch_Y)
