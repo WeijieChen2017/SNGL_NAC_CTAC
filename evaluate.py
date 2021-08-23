@@ -30,9 +30,9 @@ def PET_norm(data):
     return data
 
 def eval():
-    train_para_name_hub = ["exper05"]
+    train_para_name_hub = ["exper06"]
     test_para_name_prefix = "exper"
-    test_count = 5
+    test_count = 6
     test_count -= 1 # for iteration begining, it add by 1 in the first iteration.
 
     for train_para_name in train_para_name_hub:

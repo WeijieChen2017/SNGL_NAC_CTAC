@@ -15,7 +15,7 @@ from tensorflow.keras.optimizers import Adam
 from models import Unet
 from utils import NiftiGenerator_opt as NiftiGenerator
 
-para_name = "exper05"
+para_name = "exper06"
 # Data to be written  
 train_para ={  
     "para_name" : para_name,
@@ -26,7 +26,7 @@ train_para ={
     "start_ch" : 64,
     "depth" : 4, 
     "validation_split" : 0.2,
-    "loss" : "l1",
+    "loss" : "l2",
     "x_data_folder" : 'NPR_SRC', # NAC PET Resampled
     "y_data_folder" : 'CT_SRC',
     "weightfile_name" : 'weights_'+para_name+'.h5',
@@ -120,7 +120,7 @@ def train():
     niftiGen_norm_opts.normXfunction = PET_norm
     niftiGen_norm_opts.normYtype = 'function'
     niftiGen_norm_opts.normYfunction = CT_norm
-    niftiGen_norm_opts.prenorm = train_para["pre_norm"]
+    niftiGen_norm_opts.needNorm = train_para["pre_norm"]
     print(niftiGen_norm_opts)
 
     folderX = "./data_train/"+train_para["x_data_folder"]
