@@ -509,7 +509,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         # # do normalization
         
 
-    def generate_slice(self)
+    def generate_slice(self):
 
         j = np.random.randint( 0, len(self.normFileX) )
         currNormDataX = self.dataMemoryX[j]
