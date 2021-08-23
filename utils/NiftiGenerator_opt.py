@@ -440,6 +440,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
 
                 self.dataMemoryX[j] = Xdata
                 self.dataMemoryY[j] = Ydata
+                print(self.dataMemoryX[j].shape, self.dataMemoryY[j].shape)
 
                 # print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
                 # print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
@@ -510,6 +511,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
     def generate_slice(self):
 
         j = np.random.randint( 0, len(self.normFileX) )
+        print(j)
         currNormDataX = self.dataMemoryX[j]
         currNormDataY = self.dataMemoryY[j]
         XimgShape = currNormDataX.shape
