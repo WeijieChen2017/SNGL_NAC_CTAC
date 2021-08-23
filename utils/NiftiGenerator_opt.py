@@ -580,7 +580,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             dataLoaderPool = Pool()
             args = (Xslice_samples, Yslice_samples, batch_size)
             for i in range(batch_size):
-                dataLoaderResults.append(dataLoaderPool.apply_async(self.generate_slice), args=args)
+                dataLoaderResults.append(dataLoaderPool.apply_async(self.generate_slice, args=args))
 
             dataLoaderPool.close()
             dataLoaderPool.join()
