@@ -25,14 +25,14 @@ def CT_norm(data):
 
 def PET_norm(data):
     data[data<0] = 0
-    data[data>12000] = 12000
-    data = data / 12000
+    data[data>6000] = 6000
+    data = data / 6000
     return data
 
 def eval():
-    train_para_name_hub = ["exper04"]
+    train_para_name_hub = ["exper05"]
     test_para_name_prefix = "exper"
-    test_count = 4
+    test_count = 5
     test_count -= 1 # for iteration begining, it add by 1 in the first iteration.
 
     for train_para_name in train_para_name_hub:

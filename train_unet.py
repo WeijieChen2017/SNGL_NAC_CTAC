@@ -62,8 +62,8 @@ def CT_norm(data):
 
 def PET_norm(data):
     data[data<0] = 0
-    data[data>12000] = 12000
-    data = data / 12000
+    data[data>6000] = 6000
+    data = data / 6000
     return data
 
 def train():
