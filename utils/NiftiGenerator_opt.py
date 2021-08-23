@@ -559,6 +559,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             XimgSlices = self.augOptions.additionalFunction( XimgSlices )
             YimgSlices = self.augOptions.additionalFunction( YimgSlices )
 
+        print(XimgSlices.shape, YimgSlices.shape)
         return [XimgSlices, YimgSlices]
 
     def generate(self, img_size=(256,256), Xslice_samples=1, Yslice_samples=1, batch_size=16):
