@@ -578,7 +578,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             
             dataLoaderResults = []
             dataLoaderPool = Pool()
-            args = (img_size=, Xslice_samples, Yslice_samples, batch_size)
+            args = (img_size, Xslice_samples, Yslice_samples, batch_size)
             for i in range(batch_size):
                 dataLoaderResults.append(dataLoaderPool.apply_async(self.generate_slice, args=args))
 
