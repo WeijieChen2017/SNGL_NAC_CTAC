@@ -390,15 +390,16 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                                      "_normY_"+self.normOptions.normYtype+".hdf5")
             self.normFileX.append(savenameX)
             self.normFileY.append(savenameY)
-            if not self.normOptions.prenorm:
+
+            if self.normOptions.needNorm:
                 
                 # load nifti header
                 module_logger.debug( 'reading files {}, {}'.format(currImgFileX,currImgFileY) )
                 Ximg = nib.load( currImgFileX )
                 Yimg = nib.load( currImgFileY )
 
-                Xdata = Ximg.get_fdata()
-                Ydata = Yimg.get_fdata()
+                Xdata = Ximg.get_fdata()[:, :, self.start_z:self.end_z]
+                Ydata = Yimg.get_fdata()[:, :, self.start_z:self.end_z]
 
                 # print("batch_X mean std: ", np.mean(Xdata), np.std(Xdata))
                 # print("batch_X min max: ", np.amin(Xdata), np.amax(Xdata))
@@ -490,7 +491,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         normOptions.normYtempFolder = "./tmp/Y"
         normOptions.normYdeleteTemp = True
 
-        normOptions.prenorm = False
+        normOptions.needNorm = True
 
         return normOptions
         
