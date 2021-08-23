@@ -386,7 +386,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             self.normFileX.append(savenameX)
             self.normFileY.append(savenameY)
             print(self.normFileX)
-            if not self.normOptions.prenorm:
+            if not self.normOptions.needNorm:
                 
                 # load nifti header
                 module_logger.debug( 'reading files {}, {}'.format(currImgFileX,currImgFileY) )
@@ -482,7 +482,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         normOptions.normYtempFolder = "./tmp/Y"
         normOptions.normYdeleteTemp = True
 
-        normOptions.prenorm = False
+        normOptions.needNorm = False
 
         return normOptions
         
