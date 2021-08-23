@@ -377,7 +377,6 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
 
         for j in range(len(self.inputFilesX)):
 
-            print(j)
             currImgFileX = self.inputFilesX[j]
             currImgFileY = self.inputFilesY[j]
 
@@ -391,7 +390,6 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
                                      "_normY_"+self.normOptions.normYtype+".hdf5")
             self.normFileX.append(savenameX)
             self.normFileY.append(savenameY)
-            print(self.normFileX)
             if not self.normOptions.prenorm:
                 
                 # load nifti header
@@ -580,6 +578,7 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
             dataLoaderPool.join()
 
             for i in range(batch_size):
+                print(dataLoaderResults[i].get())
                 # put into data array for batch for this batch of samples
                 batch_X[i,:,:,:] = dataLoaderResults[i].get()[0]
                 batch_Y[i,:,:,:] = dataLoaderResults[i].get()[1]
