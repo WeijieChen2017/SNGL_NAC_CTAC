@@ -15,7 +15,7 @@ from tensorflow.keras.optimizers import Adam
 from models import Unet
 from utils import NiftiGenerator_opt as NiftiGenerator
 
-para_name = "exper10"
+para_name = "exper11"
 # Data to be written  
 train_para ={  
     "para_name" : para_name,
@@ -23,8 +23,8 @@ train_para ={
     "img_cols" : 512, # image is resampled to this size
     "channel_X" : 5,
     "channel_Y" : 1,
-    "start_ch" : 64,
-    "depth" : 5, 
+    "start_ch" : 32,
+    "depth" : 3, 
     "validation_split" : 0.2,
     "loss" : "l2",
     "x_data_folder" : 'NPR_SRC', # NAC PET Resampled
