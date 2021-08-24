@@ -47,7 +47,7 @@ train_para ={
     "need_norm" : False
 }  
 
-for folder_name in ["json", "save_models", "results"]:
+for folder_name in ["json", "save_models", "results", "data_samples"]:
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
 
