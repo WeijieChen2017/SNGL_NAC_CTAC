@@ -204,7 +204,7 @@ def train():
               initial_epoch=train_para["initial_epoch"],
               validation_data=generatorV,
               validation_steps=100,
-              callbacks=[history, model_checkpoint, tensorboard] ) # , display_progress
+              callbacks=[history, model_checkpoint, tensorboard, display_progress] ) # , display_progress
 
     dataset_go_back(folder_list, sub_folder_list)
     # generatorT.delete_tmp_data()
@@ -310,6 +310,9 @@ def progresscallback_img2img(epoch, logs, model, history, fig, generatorV):
 
     predY = model.predict(dataX)
     n_batch = train_para["batch_size"]
+    savename = "./"+train_para["para_name"]+str(epoch)+"./npy"
+    print("Save as ", savename)
+    npy.save(savename, [dataX, dataY, predY])
 
     plt.figure(dpi=200)
     for idx in range(n_batch):
