@@ -19,9 +19,9 @@ from utils import NiftiGenerator
 from train_unet import PET_norm_m11, CT_norm_m11
 
 def eval():
-    train_para_name_hub = ["exper06"]
+    train_para_name_hub = ["exper07"]
     test_para_name_prefix = "exper"
-    test_count = 6
+    test_count = 7
     test_count -= 1 # for iteration begining, it add by 1 in the first iteration.
 
     for train_para_name in train_para_name_hub:
