@@ -495,23 +495,9 @@ class PairedNiftiGenerator(SingleNiftiGenerator):
         normOptions.normYtempFolder = "./tmp/Y"
         normOptions.normYdeleteTemp = True
 
-        normOptions.needNorm = False
+        normOptions.needNorm = True
 
-        return normOptions
-        
-        # # sample data
-        # XimgSlices = Ximg.slicer[:,:,z-Xslice_samples//2:z+Xslice_samples//2+1].get_fdata()
-        # # do normalization
-               
-        # # sample data
-        # XimgSlices = tmpX[:,:,zX-Xslice_samples//2:zX+Xslice_samples//2+1]
-        # # sample data
-        # YimgSlices = tmpY[:,:,z-Yslice_samples//2:z+Yslice_samples//2+1]
-        # # print("YimgSlices stage 1: ", np.amin(YimgSlices))
-        # # sample data
-        # YimgSlices = Yimg.slicer[:,:,z-Yslice_samples//2:z+Yslice_samples//2+1].get_fdata()
-        # # do normalization
-        
+        return normOptions        
 
     def generate_slice(self, img_size=(256,256), Xslice_samples=1, Yslice_samples=1, batch_size=16):
 
