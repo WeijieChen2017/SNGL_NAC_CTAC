@@ -42,7 +42,7 @@ train_para ={
     "buffer_pool_V" : 7,
     "pre_norm" : True,
     "learning_rate" : 1e-6,
-    "last_layer" : "linear"
+    "last_layer" : "linear",
     "PET_norm" : "PET_norm_m11",
     "CT_norm" : "CT_norm_m11"
 }  
