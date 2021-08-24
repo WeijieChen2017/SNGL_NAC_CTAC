@@ -23,8 +23,8 @@ train_para ={
     "img_cols" : 512, # image is resampled to this size
     "channel_X" : 5,
     "channel_Y" : 1,
-    "start_ch" : 32,
-    "depth" : 3, 
+    "start_ch" : 64,
+    "depth" : 4, 
     "validation_split" : 0.2,
     "loss" : "l2",
     "x_data_folder" : 'NPR_SRC', # NAC PET Resampled
@@ -42,9 +42,9 @@ train_para ={
     "buffer_pool_V" : 7,
     "learning_rate" : 1e-6,
     "last_layer" : "linear",
-    "PET_norm" : "PET_norm_01",
-    "CT_norm" : "CT_norm_01",
-    "need_norm" : False
+    "PET_norm" : "PET_norm_01m11",
+    "CT_norm" : "CT_norm_01m11",
+    "need_norm" : True
 }  
 
 for folder_name in ["json", "save_models", "results"]:
@@ -83,6 +83,24 @@ def PET_norm_m11(data):
     data_sigma = np.std(data)
     data = (data - data_mu) / data_sigma
     return data
+
+def CT_norm_01m11(data):
+    data[data<-1000] = -1000
+    data[data>3000] = 3000
+    data = (data + 1000) / 4000
+    data_mu = np.mean(data)
+    data_sigma = np.std(data)
+    data = (data - data_mu) / data_sigma
+    return data
+
+def PET_norm_01m11(data):
+    data[data<0] = 0
+    data[data>6000] = 6000
+    data = data / 6000
+    data_mu = np.mean(data)
+    data_sigma = np.std(data)
+    data = (data - data_mu) / data_sigma
+    return data  
 
 def train():
 
@@ -135,9 +153,9 @@ def train():
     # niftiGen_norm_opts.normYoffset = -1000
     # niftiGen_norm_opts.normYscale = 4000
     niftiGen_norm_opts.normXtype = 'function'
-    niftiGen_norm_opts.normXfunction = PET_norm_01
+    niftiGen_norm_opts.normXfunction = PET_norm_01m11
     niftiGen_norm_opts.normYtype = 'function'
-    niftiGen_norm_opts.normYfunction = CT_norm_01
+    niftiGen_norm_opts.normYfunction = CT_norm_01m11
     niftiGen_norm_opts.needNorm = train_para["need_norm"]
     print(niftiGen_norm_opts)
 
