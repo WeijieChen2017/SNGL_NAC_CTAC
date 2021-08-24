@@ -310,7 +310,7 @@ def progresscallback_img2img(epoch, logs, model, history, fig, generatorV):
 
     predY = model.predict(dataX)
     n_batch = train_para["batch_size"]
-    savename = "./"+train_para["para_name"]+"_@epoch"str(epoch)+".npy"
+    savename = "./"+train_para["para_name"]+"_@epoch"+str(epoch)+".npy"
     print("Save as ", savename)
     np.save(savename, [dataX, dataY, predY])
 
