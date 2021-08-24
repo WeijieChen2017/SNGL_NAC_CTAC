@@ -44,7 +44,7 @@ train_para ={
     "last_layer" : "linear",
     "PET_norm" : "PET_norm_01m11",
     "CT_norm" : "CT_norm_01m11",
-    "need_norm" : True
+    "need_norm" : False
 }  
 
 for folder_name in ["json", "save_models", "results"]:
@@ -312,7 +312,7 @@ def progresscallback_img2img(epoch, logs, model, history, fig, generatorV):
     n_batch = train_para["batch_size"]
     savename = "./"+train_para["para_name"]+str(epoch)+"./npy"
     print("Save as ", savename)
-    npy.save(savename, [dataX, dataY, predY])
+    np.save(savename, [dataX, dataY, predY])
 
     plt.figure(dpi=200)
     for idx in range(n_batch):
