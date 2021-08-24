@@ -15,7 +15,7 @@ from tensorflow.keras.optimizers import Adam
 from models import Unet
 from utils import NiftiGenerator_opt as NiftiGenerator
 
-para_name = "exper08"
+para_name = "exper09"
 # Data to be written  
 train_para ={  
     "para_name" : para_name,
@@ -24,7 +24,7 @@ train_para ={
     "channel_X" : 5,
     "channel_Y" : 1,
     "start_ch" : 64,
-    "depth" : 3, 
+    "depth" : 5, 
     "validation_split" : 0.2,
     "loss" : "l2",
     "x_data_folder" : 'NPR_SRC', # NAC PET Resampled
