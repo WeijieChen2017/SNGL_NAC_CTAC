@@ -37,7 +37,7 @@ train_para ={
     "num_epochs" : 20, # should train for at least 100-200 in total
     "steps_per_epoch" : 30*20, # should be enough to be equal to one whole pass through the dataset
     "initial_epoch" : 0, # for resuming training
-    "load_weights" : True, # load trained weights for resuming training
+    "load_weights" : False, # load trained weights for resuming training
     "buffer_pool_T" : 30,
     "buffer_pool_V" : 7,
     "learning_rate" : 1e-6,
