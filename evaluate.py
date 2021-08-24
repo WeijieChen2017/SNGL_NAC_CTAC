@@ -16,18 +16,7 @@ from keras import backend as K
 
 from utils import dataUtilities as du
 from utils import NiftiGenerator
-
-def CT_norm(data):
-    data[data<-1000] = -1000
-    data[data>3000] = 3000
-    data = (data + 1000) / 4000
-    return data
-
-def PET_norm(data):
-    data[data<0] = 0
-    data[data>6000] = 6000
-    data = data / 6000
-    return data
+from train_unet import PET_norm_m11, CT_norm_m11
 
 def eval():
     train_para_name_hub = ["exper06"]
@@ -95,12 +84,12 @@ def eval():
                 print("testX: ", testX_path)
                 gt_path = testX_path.replace("NPR", "CT")
                 gt_data = nibabel.load(gt_path).get_fdata()
-                gt_data = CT_norm(gt_data)
+                gt_data = CT_norm_m11(gt_data)
 
                 testX_name = os.path.basename(testX_path)
                 testX_file = nibabel.load(testX_path)
                 testX_data = testX_file.get_fdata()
-                testX_data = PET_norm(testX_data)
+                testX_data = PET_norm_m11(testX_data)
                 # inputX = np.transpose(testX_norm, (2,0,1))
 
                 # niftiGenE = NiftiGenerator.SingleNiftiGenerator()
@@ -110,7 +99,7 @@ def eval():
                                                 # slice_samples=test_para["channel_X"],
                                                 # batch_size=test_para["batch_size"])
                 inputX = createInput(testX_data, n_slice=test_para["channel_X"])
-                print("inputX shape: ", inputX.shape)
+                # print("inputX shape: ", inputX.shape)
                 outputY = np.zeros(testX_data.shape)
                 for idx in range(testX_data.shape[2]):
                     print("-"*50)
@@ -118,13 +107,13 @@ def eval():
                                                                 test_para["img_rows"],
                                                                 test_para["img_cols"],
                                                                 test_para["channel_X"])
-                    print("inputX_slice shape: ", inputX_slice.shape)
-                    print("inputX_slice mean:", np.mean(inputX_slice))
-                    print("inputX_slice std:", np.std(inputX_slice))
+                    # print("inputX_slice shape: ", inputX_slice.shape)
+                    # print("inputX_slice mean:", np.mean(inputX_slice))
+                    # print("inputX_slice std:", np.std(inputX_slice))
                     outputY_slice =  model.predict(inputX_slice, verbose=1)
-                    print("outputY_slice shape: ", outputY_slice.shape)
-                    print("outputY_slice mean:", np.mean(outputY_slice))
-                    print("outputY_slice std:", np.std(outputY_slice))
+                    # print("outputY_slice shape: ", outputY_slice.shape)
+                    # print("outputY_slice mean:", np.mean(outputY_slice))
+                    # print("outputY_slice std:", np.std(outputY_slice))
                     outputY[:, :, idx] = np.squeeze(np.transpose(outputY_slice, (1,2,0,3))[:, :, :, test_para["channel_Y"] // 2])
                     # if idx == 32:
                     #     np.save(testX_name+"_inputX.npy", inputX_slice)
@@ -135,7 +124,7 @@ def eval():
                 # print("inputX shape: ", inputX.shape)
                 # outputY =  model.predict(generatorE, verbose=1)
 
-                print("outputY shape: ", outputY.shape)
+                # print("outputY shapels: ", outputY.shape)
                 predY_data = outputY
                 # predY_data[predY_data < 0] = 0
                 # testX_sum = np.sum(testX_data)

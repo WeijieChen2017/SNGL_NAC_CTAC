@@ -15,7 +15,7 @@ from tensorflow.keras.optimizers import Adam
 from models import Unet
 from utils import NiftiGenerator_opt as NiftiGenerator
 
-para_name = "exper06"
+para_name = "exper07"
 # Data to be written  
 train_para ={  
     "para_name" : para_name,
@@ -43,6 +43,8 @@ train_para ={
     "pre_norm" : True,
     "learning_rate" : 1e-6,
     "last_layer" : "linear"
+    "PET_norm" : "PET_norm_m11",
+    "CT_norm" : "CT_norm_m11"
 }  
 
 for folder_name in ["json", "save_models", "results"]:
@@ -54,16 +56,32 @@ with open("./json/train_para_"+train_para["para_name"]+".json", "w") as outfile:
 
 #######################
 
-def CT_norm(data):
+def CT_norm_01(data):
     data[data<-1000] = -1000
     data[data>3000] = 3000
     data = (data + 1000) / 4000
     return data
 
-def PET_norm(data):
+def PET_norm_01(data):
     data[data<0] = 0
     data[data>6000] = 6000
     data = data / 6000
+    return data
+
+def CT_norm_m11(data):
+    data[data<-1000] = -1000
+    data[data>3000] = 3000
+    data_mu = np.mean(data)
+    data_sigma = np.std(data)
+    data = (data - data_mu) / data_sigma
+    return data
+
+def PET_norm_m11(data):
+    data[data<0] = 0
+    data[data>6000] = 6000
+    data_mu = np.mean(data)
+    data_sigma = np.std(data)
+    data = (data - data_mu) / data_sigma
     return data
 
 def train():
@@ -117,9 +135,9 @@ def train():
     # niftiGen_norm_opts.normYoffset = -1000
     # niftiGen_norm_opts.normYscale = 4000
     niftiGen_norm_opts.normXtype = 'function'
-    niftiGen_norm_opts.normXfunction = PET_norm
+    niftiGen_norm_opts.normXfunction = PET_norm_m11
     niftiGen_norm_opts.normYtype = 'function'
-    niftiGen_norm_opts.normYfunction = CT_norm
+    niftiGen_norm_opts.normYfunction = CT_norm_m11
     niftiGen_norm_opts.needNorm = train_para["pre_norm"]
     print(niftiGen_norm_opts)
 
@@ -153,7 +171,7 @@ def train():
     model_checkpoint = ModelCheckpoint(train_para["save_folder"]+train_para["weightfile_name"],
                                        monitor='val_loss', 
                                        save_best_only=True)
-    tensorboard = TensorBoard(log_dir=os.path.join('tblogs','{}'.format(time())))
+    tensorboard = TensorBoard(log_dir=os.path.join('tblogs','{}'.format(time()), '{}'.format(train_para["para_name"])))
     display_progress = LambdaCallback(on_epoch_end= lambda epoch,
                                       logs: progresscallback_img2img(epoch, logs, model, history, fig, generatorV) )
 
@@ -168,7 +186,7 @@ def train():
               initial_epoch=train_para["initial_epoch"],
               validation_data=generatorV,
               validation_steps=100,
-              callbacks=[history, model_checkpoint] ) # , display_progress
+              callbacks=[history, model_checkpoint, tensorboard] ) # , display_progress
 
     dataset_go_back(folder_list, sub_folder_list)
     # generatorT.delete_tmp_data()
