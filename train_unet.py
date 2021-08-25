@@ -14,6 +14,7 @@ from tensorflow.keras.optimizers import Adam
 
 from models import Unet
 from utils import NiftiGenerator_opt as NiftiGenerator
+from keras import backend as K
 
 def mse1e6(y_true, y_pred):
     return K.mean(K.square(y_pred - y_true), axis=-1)*1e6
