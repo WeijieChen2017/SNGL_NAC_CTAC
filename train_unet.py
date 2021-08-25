@@ -15,7 +15,7 @@ from tensorflow.keras.optimizers import Adam
 from models import Unet
 from utils import NiftiGenerator_opt as NiftiGenerator
 
-para_name = "exper13"
+para_name = "exper14"
 # Data to be written  
 train_para ={  
     "para_name" : para_name,
@@ -24,7 +24,7 @@ train_para ={
     "channel_X" : 5,
     "channel_Y" : 1,
     "start_ch" : 64,
-    "depth" : 3, 
+    "depth" : 4, 
     "validation_split" : 0.2,
     "loss" : "l2",
     "x_data_folder" : 'NPR_SRC', # NAC PET Resampled
@@ -40,7 +40,7 @@ train_para ={
     "load_weights" : False, # load trained weights for resuming training
     "buffer_pool_T" : 30,
     "buffer_pool_V" : 7,
-    "learning_rate" : 1e-6,
+    "learning_rate" : 1e-3,
     "last_layer" : "linear",
     "PET_norm" : "PET_norm_01",
     "CT_norm" : "CT_norm_01",
