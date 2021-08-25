@@ -23,7 +23,7 @@ train_para ={
     "img_cols" : 512, # image is resampled to this size
     "channel_X" : 5,
     "channel_Y" : 1,
-    "start_ch" : 64,
+    "start_ch" : 128,
     "depth" : 4, 
     "validation_split" : 0.2,
     "loss" : "l2",
@@ -44,7 +44,7 @@ train_para ={
     "last_layer" : "linear",
     "PET_norm" : "PET_norm_01",
     "CT_norm" : "CT_norm_01",
-    "need_norm" : True
+    "need_norm" : False
 }  
 
 for folder_name in ["json", "save_models", "results", "data_samples"]:
