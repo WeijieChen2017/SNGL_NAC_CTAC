@@ -15,6 +15,12 @@ from tensorflow.keras.optimizers import Adam
 from models import Unet
 from utils import NiftiGenerator_opt as NiftiGenerator
 
+def mse1e6(y_true, y_pred):
+    return K.mean(K.square(y_pred - y_true), axis=-1)*1e6
+
+def mae1e6(y_true, y_pred):
+    return K.mean(K.absolute(y_pred - y_true), axis=-1)*1e6
+
 para_name = "exper14"
 # Data to be written  
 train_para ={  
@@ -108,9 +114,9 @@ def train():
 
     np.random.seed(813)
     if train_para["loss"] == "l1":
-        loss = mean_absolute_error
+        loss = mae1e6
     if train_para["loss"] == "l2":
-        loss = mean_squared_error
+        loss = mse1e6
 
     print('-'*50)
     print('Creating and compiling model...')
