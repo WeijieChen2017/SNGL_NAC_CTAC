@@ -16,12 +16,15 @@ from keras import backend as K
 
 from utils import dataUtilities as du
 from utils import NiftiGenerator
-from train_unet import PET_norm_m11, CT_norm_m11
+from train_unet import PET_norm_01, CT_norm_01
+
+PET_norm = PET_norm_01
+CT_norm = CT_norm_01
 
 def eval():
-    train_para_name_hub = ["exper07"]
+    train_para_name_hub = ["exper12"]
     test_para_name_prefix = "exper"
-    test_count = 7
+    test_count = 12
     test_count -= 1 # for iteration begining, it add by 1 in the first iteration.
 
     for train_para_name in train_para_name_hub:
@@ -84,12 +87,12 @@ def eval():
                 print("testX: ", testX_path)
                 gt_path = testX_path.replace("NPR", "CT")
                 gt_data = nibabel.load(gt_path).get_fdata()
-                gt_data = CT_norm_m11(gt_data)
+                gt_data = CT_norm(gt_data)
 
                 testX_name = os.path.basename(testX_path)
                 testX_file = nibabel.load(testX_path)
                 testX_data = testX_file.get_fdata()
-                testX_data = PET_norm_m11(testX_data)
+                testX_data = PET_norm(testX_data)
                 # inputX = np.transpose(testX_norm, (2,0,1))
 
                 # niftiGenE = NiftiGenerator.SingleNiftiGenerator()
