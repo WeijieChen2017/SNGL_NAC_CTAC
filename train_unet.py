@@ -15,7 +15,7 @@ from tensorflow.keras.optimizers import Adam
 from models import Unet
 from utils import NiftiGenerator_opt as NiftiGenerator
 
-para_name = "exper11"
+para_name = "exper12"
 # Data to be written  
 train_para ={  
     "para_name" : para_name,
@@ -42,8 +42,8 @@ train_para ={
     "buffer_pool_V" : 7,
     "learning_rate" : 1e-6,
     "last_layer" : "linear",
-    "PET_norm" : "PET_norm_01m11",
-    "CT_norm" : "CT_norm_01m11",
+    "PET_norm" : "PET_norm_01",
+    "CT_norm" : "CT_norm_01",
     "need_norm" : False
 }  
 
@@ -153,9 +153,9 @@ def train():
     # niftiGen_norm_opts.normYoffset = -1000
     # niftiGen_norm_opts.normYscale = 4000
     niftiGen_norm_opts.normXtype = 'function'
-    niftiGen_norm_opts.normXfunction = PET_norm_01m11
+    niftiGen_norm_opts.normXfunction = PET_norm_01
     niftiGen_norm_opts.normYtype = 'function'
-    niftiGen_norm_opts.normYfunction = CT_norm_01m11
+    niftiGen_norm_opts.normYfunction = CT_norm_01
     niftiGen_norm_opts.needNorm = train_para["need_norm"]
     print(niftiGen_norm_opts)
 
