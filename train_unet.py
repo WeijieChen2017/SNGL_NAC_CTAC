@@ -44,7 +44,7 @@ train_para ={
     "last_layer" : "linear",
     "PET_norm" : "PET_norm_01",
     "CT_norm" : "CT_norm_01",
-    "need_norm" : False
+    "need_norm" : True
 }  
 
 for folder_name in ["json", "save_models", "results", "data_samples"]:
