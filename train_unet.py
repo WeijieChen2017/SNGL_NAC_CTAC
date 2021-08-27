@@ -22,7 +22,7 @@ def mse1e6(y_true, y_pred):
 def mae1e6(y_true, y_pred):
     return K.mean(K.absolute(y_pred - y_true), axis=-1)*1e6
 
-para_name = "exper14"
+para_name = "exper15"
 # Data to be written  
 train_para ={  
     "para_name" : para_name,
@@ -42,7 +42,7 @@ train_para ={
     "jpgprogressfile_name" : 'progress_'+para_name,
     "batch_size" : 8, # should be smallish. 1-10
     "num_epochs" : 30, # should train for at least 100-200 in total
-    "steps_per_epoch" : 50, # should be enough to be equal to one whole pass through the dataset
+    "steps_per_epoch" : 100, # should be enough to be equal to one whole pass through the dataset
     "initial_epoch" : 0, # for resuming training
     "load_weights" : False, # load trained weights for resuming training
     "buffer_pool_T" : 30,
